@@ -15,14 +15,21 @@ experiences in data analysis and scientific computing but also provides
 a powerful and versatile toolset for researchers, educators, and
 practitioners.
 
-## Contents
+## Details
+
+- **Location:** [Hewlett Teaching
+  Center](https://campus-map.stanford.edu/?id=04-510), Room 101.
+- **Dates:** Wednesdays, May 1<sup>st</sup> and May 8<sup>th</sup> 2024
+- **Time:** 1:30 – 2:50 PM PDT (80 minutes)
+
+## Schedule
 
 - May 1st
   - WASM intro, Quarto, and Pyodide
 - May 8th
   - webR, compiling locally, hosting
 
-## Resources for learning more
+## Useful links
 
 - [`Pyodide`](https://pyodide.org/en/stable/)
   [:octocat:](https://github.com/pyodide/pyodide): Severless Python
@@ -39,3 +46,5 @@ practitioners.
   - [`{quarto-webr}`](https://quarto-webr.thecoatlessprofessor.com/)
     [:octocat:](https://github.com/coatless/quarto-webr): Severless R
     documents
+
+## Additional Resources
