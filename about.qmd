@@ -1,0 +1,12 @@
+---
+title: "About the lectures"
+sidebar: false
+---
+
+The contents found here are designed for guest lectures inside of STATS 352: Topics in Data Science at Stanford University. 
+
+- **Location:** Hewlett Teaching Center, Room 101.
+- **Dates:** Wednesdays, May 1^st^ and May 8^th^ 2024
+- **Time:** 1:30 – 2:50 PM PDT (80 minutes)
+
+You can see the source code for the lecture content on GitHub [{{< fa brands github >}}](https://github.com/coatless-talks/stats352-guest-lectures-on-dynamic-interactions-wasm).
