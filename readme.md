@@ -7,15 +7,16 @@ These lectures delve into the world of dynamic interactions available through in
 ### Details
 
 - **Location:** [Hewlett Teaching Center](https://campus-map.stanford.edu/?id=04-510), Room 101.
-- **Dates:** Wednesdays, May 1^st^ and May 8^th^ 2024
+- **Dates:** Wednesdays, May 1st and May 8th 2024
 - **Time:** 1:30 – 2:50 PM PDT (80 minutes)
 
 ### Schedule
 
 - May 1st
-  - WASM intro, Quarto, and Pyodide
+  - WASM with webR and Pyodide
+  - Quarto Overview
 - May 8th
-  - webR, compiling locally, hosting
+  - In-class coding
 
 ### Useful links
 
