@@ -1,0 +1,11 @@
+.quarto-title-block .quarto-title-banner {
+    /* Navigate back to the top-level where the _extensions folder is */
+    /* Note, we are embedding this as a resource into the page! */
+    background-image: url('../../../_extensions/coatless-quarto/stanford/logos/stanford_logo_2.png');
+    /* Set a relative size */
+    background-size: 12em;
+    /* 100 100 is bottom right corner */
+    background-position: 80% 50%;
+    /* Only allow one copy */
+    background-repeat: no-repeat;
+  }

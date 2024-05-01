@@ -1,0 +1,45 @@
+$if(title)$
+\title{$title$$if(thanks)$\thanks{$thanks$}$endif$}
+$endif$
+$if(subtitle)$
+$if(beamer)$
+$else$
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+$endif$
+\subtitle{$subtitle$}
+$endif$
+\author[
+$if(short-author)$
+$for(short-author)$$short-author$$sep$ \and $endfor$
+$else$
+$for(authors)$$it.name.literal$$sep$ \and $endfor$
+$endif$
+]{
+$for(authors)$$it.name.literal$$sep$ \and $endfor$\\%
+% Custom e-mail inclusion ----
+\footnotesize$for(authors)$\href{mailto:$it.email$}{$it.email$}$sep$ \and $endfor$
+\vspace{-2ex}
+}
+\date{$date$}
+$if(beamer)$
+$if(institute)$
+\institute{
+% Hard code logo path ----
+\includegraphics[height=0.4in]{_extensions/coatless-quarto/stanford/logos/SU_New_BlockStree_2color.png}\\
+$for(institute)$$institute$$sep$ \and $endfor$
+}
+$endif$
+$if(titlegraphic)$
+\titlegraphic{\includegraphics{$titlegraphic$}}
+$endif$
+%$if(logo)$
+%\logo{\includegraphics{$logo$}}
+%$endif$
+% Hard code logo path ----
+\logo{\includegraphics[height=0.42in]{_extensions/coatless-quarto/stanford/logos/SU_New_BlockStree_2color.png}}
+$endif$

@@ -1,0 +1,23 @@
+$if(has-frontmatter)$
+\frontmatter
+$endif$
+$if(title)$
+$if(beamer)$
+\mode<all>{
+\setbeamertemplate{headline}[default]
+\begin{frame}
+    \maketitle
+\end{frame}
+}
+\mode<all>{
+\setbeamertemplate{headline}[sidebar theme]
+}
+$else$
+\maketitle
+$endif$
+$if(abstract)$
+\begin{abstract}
+$abstract$
+\end{abstract}
+$endif$
+$endif$

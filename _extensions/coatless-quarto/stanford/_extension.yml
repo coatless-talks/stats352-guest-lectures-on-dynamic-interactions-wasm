@@ -1,0 +1,48 @@
+title: stanford
+author: James J Balamuta
+version: 0.0.1
+quarto-required: ">=1.4.0"
+contributes:
+  formats:
+    html:
+      mainfont: Roboto
+      sansfont: Source Sans 3
+      fontcolor: "#000"
+      title-block-banner: "#2E2D29"
+      title-block-banner-color: "#FFF"
+      date-format: long
+      toc: true
+      toc-title: Contents
+      reference-location: margin
+      fig-cap-location: top
+      embed-resources: true
+      anchor-sections: true
+      smooth-scroll: true
+      footnotes-hover: true
+      number-sections: false
+      # This isn't great in placing a logo as it conflicts with
+      # code tools
+      css: html/stanford-header.css
+    beamer: 
+      include-in-header: 
+        - beamer/front-matter.tex
+      # Override pandoc defaults to obtain the correct title slide
+      # and author information.
+      template-partials:
+        - beamer/title.tex
+        - beamer/before-body.tex
+    revealjs:
+      date-format: long
+      overview: true
+      progress: true
+      touch: true
+      chalkboard: true
+      execute:
+        echo: true
+      title-slide-attributes:
+        data-background-image: logos/stanford-logo-faded-tree.png
+        data-background-size: contain
+        data-background-opacity: 100
+      theme: [default, revealjs/custom.scss]
+      logo: logos/stanford-watermark-white.svg
+

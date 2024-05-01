@@ -1,0 +1,54 @@
+\usepackage[]{units}
+\usepackage{listings}
+\usepackage{multicol}
+\usepackage{tcolorbox}
+\usepackage{physics}
+
+%new commands
+\newcommand{\der}[2]{\frac{d#1}{d#2}}
+\newcommand{\nder}[3]{\frac{d^#1 #2}{d #3 ^ #1}}
+\newcommand{\pder}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\npder}[3]{\frac{\partial ^#1 #2}{\partial #3^#1}}
+\newcommand{\sentencelist}{def}
+\newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
+\newcommand{\lined}{\overbar}
+\newcommand{\perm}[2]{{}^{#1}\!P_{#2}}
+\newcommand{\comb}[2]{{}^{#1}C_{#2}}
+\newcommand{\intall}{\int_{-\infty}^{\infty}}
+\newcommand{\Var}[1]{\text{Var}\left(#1\right)}
+\newcommand{\E}[1]{\text{E}\left(#1\right)}
+\newcommand{\define}{\equiv}
+\newcommand{\diff}[1]{\mathrm{d}#1}
+\newcommand{\empy}[1]{{\color{darkorange}\emph{#1}}}
+\newcommand{\empr}[1]{{\color{cardinalred}\emph{#1}}}
+
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\theoremstyle{definition}
+
+\newcommand{\examplebox}[2]{
+\begin{tcolorbox}[colframe=darkcardinal,colback=boxgray,title=#1]
+#2
+\end{tcolorbox}}
+
+% Address custom theme location in folder
+% Mirrors implementation from: 
+% https://tex.stackexchange.com/a/284157/53878
+\makeatletter
+  \def\beamer@calltheme#1#2#3{%
+    \def\beamer@themelist{#2}
+    \@for\beamer@themename:=\beamer@themelist\do
+    {\usepackage[{#1}]{\beamer@themelocation/#3\beamer@themename}}}
+
+  \def\usefolder#1{
+    \def\beamer@themelocation{#1}
+  }
+  \def\beamer@themelocation{}
+
+% Define folder where theme can be found
+\usefolder{_extensions/coatless-quarto/stanford/beamer}
+
+% Load theme
+\usetheme{Stanford}
+\beamertemplatenavigationsymbolsempty
