@@ -7,6 +7,7 @@ format:
   stanford-revealjs: 
     highlight-style: a11y
     transition: fade
+    code-overflow: wrap
 editor: visual
 execute:
   freeze: auto
@@ -191,7 +192,7 @@ In the new prompt, enter a title, author name, and press "Create"
 ## Aside: Word's Format
 
 ::: callout-note
-The above screenshot is taken by unzipping the `.docx` file:
+The prior screenshot is taken by unzipping the `.docx` file and, then, opening the `document.xml` file, e.g. in Terminal we have:
 
 ``` bash
 unzip word-document.docx && open word/document.xml
@@ -301,7 +302,9 @@ Writing text with emphasis in *italics*, **bold**, \***italics + bold**, ~~strik
 Line breaks create a new paragraph. 
 
 Links can be hidden e.g. 
-[Stanford](https://stanford.edu/) or 
+[Stanford](
+https://stanford.edu/
+) or 
 not <https://stanford.edu/>.
 ```
 :::
@@ -353,7 +356,7 @@ not <https://stanford.edu/>.
 :::
 
 
-## Warning: Images
+## Images: Path Warning
 
 ::: callout-important
 **Relative** paths are the best to use to share your work with others as they are operating system independent. For example, do you have a user called "jjb" on your computer with a folder "img"?
@@ -401,6 +404,7 @@ $$1 - x = y$$
 
 ::: {.column width="45%"}
 **Output**
+
 Inline math: $a^2 + b^2 = c^2$
 
 Display math (centered math): $$1 - x = y$$
@@ -440,10 +444,6 @@ Display math (centered math): $$1 - x = y$$
 
 ## Lists: Unordered
 
-::: callout-important
-Make sure a new line (space) exists between text and the first list item. For sublists or nested lists, indent **four spaces** to create a new level in the list.
-:::
-
 ::: columns
 ::: {.column width="45%"}
 **Code**
@@ -472,9 +472,6 @@ My **un**ordered list:
 
 ## Lists: Ordered
 
-::: callout-tip
-To simplify ordered lists and allow for moving items in the list around, use `1.` for each item. If a list needs to be broken, numbering is only continued if each entry is labeled using `1.`, `2.`, `3.`, ... format.
-:::
 
 ::: columns
 ::: {.column width="45%"}
@@ -504,6 +501,16 @@ My **ordered** list:
 :::
 :::
 
+## List: Summary
+
+::: callout-important
+Make sure a new line (space) exists between text and the first list item. For sublists or nested lists, indent **four spaces** to create a new level in the list.
+:::
+
+::: callout-tip
+To simplify ordered lists and allow for moving items in the list around, use `1.` for each item. If a list needs to be broken, numbering is only continued if each entry is labeled using `1.`, `2.`, `3.`, ... format.
+:::
+
 ## Tables
 
 **Code**
@@ -523,6 +530,9 @@ My **ordered** list:
 | Hey, check it out  | Colons provide  |   873 |
 | its **Markdown**   | alignment thus  |  1000 |
 | right in the table | *centered* text |       |
+
+
+## Table: Tip
 
 ::: callout-tip
 `Visual` mode provides a [`Table` menu](https://quarto.org/docs/visual-editor/#editor-toolbar) to setup [quarto tables](https://quarto.org/docs/authoring/tables.html) or use the [table generator](https://www.tablesgenerator.com/markdown_tables) website.
@@ -666,29 +676,27 @@ plot(x, y)
 +-----------+---------------------------------------------------------------------------------------------------+---------+
 | `error`   | Include errors in the output (continues execution if error present).                              |         |
 +-----------+---------------------------------------------------------------------------------------------------+---------+
-| `include` | Catch all for preventing any output (code or results) from being included (e.g. `include: false`) |         |
+| `include` | Catch all for preventing any output (code or results) from being included.                        |         |
 +-----------+---------------------------------------------------------------------------------------------------+---------+
 
-::: footer
--   Additional quarto options: <https://quarto.org/docs/computations/execution-options.html>
--   If using *R*, all the options of `knitr` are available: <http://yihui.name/knitr/options>
+
+## Customize Code Execution Options
+
+:::{.callout-note}
+-  Additional quarto options: <https://quarto.org/docs/computations/execution-options.html>
+-  If using *R*, all the options of `knitr` are available: <http://yihui.name/knitr/options>
 :::
 
-## **eval** vs. **echo**
+## Demo: echo option
+
+`echo` hides code, but shows results.
 
 ::: columns
 ::: {.column width="45%"}
 **Code**
 
-```{{{r}}}
-#| label: ex-orig
-x = 1:10; y = 11:20
-plot(x, y)
-```
-
 ```{{r}}
-#| label: ex-not-run
-#| eval: false
+#| label: ex-orig
 x = 1:10; y = 11:20
 plot(x, y)
 ```
@@ -713,16 +721,6 @@ x = 1:10; y = 11:20
 plot(x, y)
 ```
 
-`ex-not-run` Output:
-
-```{r}
-#| label: ex-not-run
-#| eval: false
-#| echo: true
-x = 1:10; y = 11:20
-plot(x, y)
-```
-
 `ex-hide-code` Output:
 
 ```{r}
@@ -734,6 +732,53 @@ plot(x, y)
 ```
 :::
 :::
+
+## Demo: eval option
+
+`eval` shows code, but does not create results.
+
+::: columns
+::: {.column width="45%"}
+**Code**
+
+```{{r}}
+#| label: ex-orig
+x = 1:10; y = 11:20
+plot(x, y)
+```
+
+```{{r}}
+#| label: ex-not-run
+#| eval: false
+x = 1:10; y = 11:20
+plot(x, y)
+```
+:::
+
+::: {.column width="45%"}
+**Output**
+
+`ex-original` Output:
+
+```{r, echo = TRUE}
+#| label: ex-orig-2
+#| fig-height: 2.5
+x = 1:10; y = 11:20
+plot(x, y)
+```
+
+`ex-not-run` Output:
+
+```{r}
+#| label: ex-not-run
+#| eval: false
+#| echo: true
+x = 1:10; y = 11:20
+plot(x, y)
+```
+:::
+:::
+
 
 ## Inline code
 
@@ -895,13 +940,22 @@ For individual format options, please find the format on the [All Formats](https
 
 -   Officially, the [`Sweave` (.Rnw)](https://stat.ethz.ch/R-manual/R-patched/library/utils/doc/Sweave.pdf) system backed by *R*-core allowed for literate programming.
 
+-  Championed by [Fritz Leisch](https://www.r-project.org/doc/obit/fritz.html), who was an R Core Member that recently passed away.
+
+## Iteration 1: Sweave
+
 -   However, the system required extensive use of [LaTeX](https://www.latex-project.org/), which marks up text, to combine *R* code with prose.
 
 -   Plus, there were a few useful options such as saving long running code chunk results to avoid needing to re-calculate the output that were missing.
 
     Sample Sweave code chunk:
 
-    \<\<plot1, eval=FALSE, width=8, height=6\>\>= data(faithful) plot(faithful$eruptions, faithful$waiting) \@
+```default
+<<plot1, eval=FALSE, width=8, height=6>>= 
+data(faithful) 
+plot(faithful$eruptions, faithful$waiting)
+@
+```
 
 ## Iteration 2: knitr & rmarkdown (.Rmd)
 
@@ -911,7 +965,12 @@ For individual format options, please find the format on the [All Formats](https
 
     Sample Rmarkdown code chunk:
 
-    `{{r plot1, eval=FALSE, width=8, height=6}} data(faithful) plot(faithful$eruptions, faithful$waiting)`
+````md
+```{{r plot1, eval=FALSE, width=8, height=6}}
+data(faithful)
+plot(faithful$eruptions, faithful$waiting)
+```
+````
 
 ## Iteration 3: Quarto (.qmd)
 
@@ -921,12 +980,15 @@ For individual format options, please find the format on the [All Formats](https
 
 -   As data science is a **polygot** field, that is you need to speak more than one language (e.g. Python, R, Julia, SQL, C++, ...), the idea for a language agnostic framework was born.
 
+
+## Iteration 3: Quarto (.qmd)
+
 -   `Quarto` is the manifestation of being able to work with multiple languages *without* needing **R** (you could just use a Jupyter kernel).
 
     Sample Quarto code chunk:
 
-    ````         
-    ``` {{r}}
+    ````md         
+    ```{{r}}
     #| label: plot1
     #| eval: false
     #| width: 8
@@ -936,12 +998,15 @@ For individual format options, please find the format on the [All Formats](https
     ```
     ````
 
-## Summary
+## Summary: Part I
 
 -   Code for Humans
     -   Write code in a human-friendly way for consumption by humans not computers with literate programming.
     -   Scientists aim for the Golden Standard of experiments being **replicable**.
     -   Statisticians/Data Scientists aim for being able to **reproducible** computations
+
+## Summary: Part II
+
 -   Markdown
     -   Focuses on plain text that is human readable and customizable.
 -   Quarto
