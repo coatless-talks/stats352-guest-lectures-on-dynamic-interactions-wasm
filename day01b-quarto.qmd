@@ -1,0 +1,948 @@
+---
+title: "Reproducible Research"
+subtitle: "with Quarto"
+author: "James Balamuta"
+date: now
+format: 
+  stanford-revealjs: 
+    highlight-style: a11y
+    transition: fade
+editor: visual
+execute:
+  freeze: auto
+---
+
+## Lecture Objectives
+
+-   Understand and describe literate programming
+-   Discuss *markdown* a text-driven authoring format for writing documents.
+-   Create dynamic reports using Quarto (next version of RMarkdown)
+
+# Code for Humans
+
+## Wrong Data
+
+> Hello James,
+>
+> Prof. Toad\* gave us an old copy of the dataset. Could you redo the analysis on the updated data? Let's aim to meet tomorrow for coffee to discuss the results. Are you free at 9 AM?
+>
+> Best,
+>
+> Steven
+
+::: footer
+\* Identity changed to protect the innocent.
+:::
+
+##  {.empty}
+
+{{< video https://youtu.be/s3JldKoA0zw width="100%" height="85%" >}}
+
+## In the Wild: Data Science Gone Wrong
+
+-   [Retraction Watch](https://retractionwatch.com/) by Adam Marcus, Ivan Oransky, and Alison McCook Monitors for authors retracting their paper from a journal.
+
+-   One such case of a paper being retracted due to an Excel error was the [Growth in a Time of Debt](https://www.nber.org/papers/w15639) by Reinhart & Rogoff.
+
+    -   The error was found by graduate student Thomas Herndon and co-authors Michael Ash, and Robert Pollin.
+    -   They published a [critique](https://www.peri.umass.edu/publication/item/526-does-high-public-debt-consistently-stifle-economic-growth-a-critique-of-reinhart-and-rogo-ff) highlighting the error.
+    -   Herndon appeared on the [Colbert Report](http://www.cc.com/video-clips/kbgnf0/the-colbert-report-austerity-s-spreadsheet-error---thomas-herndon) to discuss their findings.
+
+
+##  {.empty}
+
+<br>
+
+::: {.r-fit-text .vertical-align}
+How can we create a report that
+
+**contains code**
+
+and
+
+**updates if data changes?**
+:::
+
+## Replicable
+
+::: columns
+::: {.column width="40%"}
+![](assets/quarto-images/xkcd-242-the-difference.png){width="250" fig-alt="XKCD Comic that shows a person pulling a lever and being shocked. Then, the person pauses and contemplates not pulling the lever or pulling the lever again to verify they would be shocked."}
+:::
+
+::: {.column width="50%"}
+**Replicability** is present only when the exact same experiment is performed at least twice leading to the same conclusion. This requires each experiment having the *same* data collection and analysis mechanisms.
+:::
+:::
+
+## Reproducible
+
+**Reproducibility** exists if there is a specific set of computational functions/analyses (usually specified in terms of code) that exactly reproduces all of the numbers in a published paper from raw data.
+
+There has been a notable push to move toward **Reproducibility** within Statistics. In particular, the [Journal of American Statistical Association (JASA)](https://www.tandfonline.com/toc/uasa20/current) recently created [a formal guide for reproducibility](https://jasa-acs.github.io/repro-guide) and appointed their own [Associate Editors of Reproducibility](https://www.tandfonline.com/action/journalInformation?show=editorialBoard&journalCode=uasa20)!
+
+Elsewhere, the scientific community discussed reproducibility at length in a [special edition](https://www.science.org/toc/science/334/6060) at the [Science journal](https://www.science.org/journal/science).
+
+##  {.empty}
+
+::: columns
+::: {.column width="30%"}
+![](assets/quarto-images/literate-programming-book-cover.jpeg){width="250" fig-alt="Coverpage of the Literate Programming book by Donald E. Knuth"}
+:::
+
+::: {.column width="62%"}
+> "Let us change our traditional attitude to the constructions of programs: Instead of imagining that our main task is to instruct a computer what to do, let us concentrate rather **on explaining to human beings what we want a computer to do.**"
+>
+> --- Donald Knuth in Literate Programming (1984) on pg. 1
+:::
+:::
+
+## Literate Programming
+
+The notion of encouraging programmers to interleaving code within narrative content that follows the natural logic and flow of human thought.
+
+::: {.fragment fragment-index="1" data-id="box1" style="border: 8px solid blue; text-align:center; width: 600px; height: 50px; margin: 10px auto; vertical-align: top;"}
+Text
+:::
+
+::: {.fragment fragment-index="2" data-id="box4" style="border: 8px solid orange; text-align:center; width: 600px; height: 50px; margin: 0 auto; vertical-align: top;"}
+Code
+:::
+
+::: {.fragment fragment-index="3" data-id="box4" style="border: 8px solid purple; text-align:center; width: 600px; height: 50px; margin: 10px auto; vertical-align: top;"}
+Output
+:::
+
+::: {.fragment fragment-index="4" data-id="box4" style="border: 8px solid blue; text-align:center; width: 600px; height: 50px; margin: 0 auto; vertical-align: top;"}
+Text
+:::
+
+## Quarto in the World: Books
+
+```{r}
+#| label: r4ds-book-website
+#| echo: false
+knitr::include_url("https://r4ds.hadley.nz/", height = "500px")
+```
+
+<https://r4ds.hadley.nz/> \| [GitHub](https://github.com/hadley/r4ds/)
+
+## Quarto in the World: Website
+
+```{r}
+#| label: quarto-tip-a-day
+#| echo: false
+knitr::include_url("https://mine-cetinkaya-rundel.github.io/quarto-tip-a-day/", height = "500px")
+```
+
+<https://mine-cetinkaya-rundel.github.io/quarto-tip-a-day/> \| [GitHub](https://github.com/mine-cetinkaya-rundel/quarto-tip-a-day)
+
+## Quarto in the World: Academic Papers
+
+```{r}
+#| label: academic-papers
+#| echo: false
+knitr::include_url("https://quarto-journals.github.io/jss/", height = "500px")
+```
+
+<https://quarto-journals.github.io/jss/> \| [GitHub](https://github.com/quarto-journals/jss)
+
+# Overview of a Quarto Document
+
+## Create a Quarto Document
+
+::: columns
+::: {.column width="45%"}
+In the top left, click the White Plus and select "Quarto Document..."
+
+![Creating a new Quarto Document](assets/quarto-images/rstudio-qmd-plus-document-menu.png){width="175" fig-alt="Drop down menu containing Quarto Document creation button"}
+:::
+
+::: {.column width="45%"}
+In the new prompt, enter a title, author name, and press "Create"
+
+![New Document Options](assets/quarto-images/rstudio-qmd-new-document-prompt.png){fig-alt="New quarto document wizard allowing a title and author information to be set."}
+:::
+:::
+
+## Annotated Quarto Document
+
+![Annotated sections of the "Hello Quarto" document related to document information, text formatting, and code execution](assets/quarto-images/qmd-annotations/qmd-document-annotated.png){width="500" fig-alt="Annotated figure that describes the different sections of a Quarto document while in the source editor mode."}
+
+## Output of a Quarto Document
+
+![Annotated source to output of the "Hello Quarto" document](assets/quarto-images/qmd-annotations/qmd-rendered-annotated.png){width="500" fig-alt="Image showcasing how the source code of the document translated over into the rendered product."}
+
+## Navigating a Quarto Document
+
+![Annotated "Hello Quarto" document navigation options](assets/quarto-images/qmd-annotations/qmd-navigator-annotated.png){width="500" fig-alt="Quarto document section view using either the outline form or navigator form"}
+
+# Writing in Markdown
+
+## A World Without Markdown
+
+![Example of a Word document [`word-document.docx`](https://github.com/stat447-sp23/demo/raw/main/word-document.docx)](assets/quarto-images/example-word-document.png){fig-alt="A sample word document that contains text that has been accented with bold and italics as well as an unordered list."}
+
+## A World Powered By Microsoft's Mark**up**
+
+![Source of the example Word document [`unzip word-document.docx`](https://github.com/stat447-sp23/demo/tree/main/word)](assets/quarto-images/example-word-document-source.png){height="300" fig-alt="The markup involved in showing how word stores formatting information."}
+
+
+## Aside: Word's Format
+
+::: callout-note
+The above screenshot is taken by unzipping the `.docx` file:
+
+``` bash
+unzip word-document.docx && open word/document.xml
+```
+:::
+
+## A World With HTML
+
+![Sample HTML Webpage mirror the word document](assets/quarto-images/example-html-document.png){fig-alt="A sample HTML document that contains text that has been accented with bold and italics as well as an unordered list."}
+
+## A World With HTML Document Source
+
+![Source of the sample HTML webpage](assets/quarto-images/example-html-document-source.png){fig-alt="The source code generating the HTML document with text that has been accented with bold and italics as well as an unordered list."}
+
+## A World With Markdown
+
+:::{.columns}
+
+:::{.column}
+**Code**
+
+``` md
+Welcome to my markdown document. 
+We can have **bold**, _italic_, 
+***bold and italics*** text.
+Also, we have:
+
+- An
+- Unordered
+- List
+
+Not bad right?
+```
+
+:::
+
+:::{.column}
+**Output**
+
+Welcome to my markdown document. We can have **bold**, *italic*, ***bold and italics*** text. Also, we have:
+
+-   An
+-   Unordered
+-   List
+
+Not bad right?
+:::
+
+:::
+
+##  {.empty}
+
+<br><br><br>
+
+::: {.r-fit-text .center .vertical-align}
+Markdown is the
+
+**lingua franca**
+
+to creating any kind of document
+:::
+
+## Markdown in the Wild: Reddit
+
+![Writing a post using markdown on [Stanford's Subreddit](https://reddit.com/r/stanford)](assets/quarto-images/example-markdown-post-reddit-stanford.png){fig-alt="Demo using markdown to make a post on the website Reddit.com"}
+
+## Markdown in the Wild: GitHub
+
+![Writing an issue using markdown on [GitHub](https://github.com)](assets/quarto-images/example-markdown-issue-github.png){fig-alt="Demo using markdown to create an issue on the website GitHub.com"}
+
+## Markdown Quick Reference In RStudio
+
+![Accessing the "Markdown Quick Reference" Guide inside of RStudio](assets/quarto-images/qmd-annotations/markdown-cheatsheet.png){height="400" fig-alt="Opening the built-in Markdown quick reference sheet inside of RStudio by going to the help menu and selecting 'Markdown Quick Reference'."}
+
+## Text Formatting {auto-animate="true"}
+
+::: columns
+::: {.column width="45%"}
+**Code**
+
+``` md
+Writing text with emphasis in
+*italics*, **bold**, 
+***italics + bold**,
+~~strikethrough~~,
+superscript^2^ / subscript~2~,
+and `code style`.
+```
+:::
+
+::: {.column width="45%"}
+**Output**
+
+Writing text with emphasis in *italics*, **bold**, \***italics + bold**, ~~strikethrough~~, superscript^2^ / subscript~2~, and `code style`.
+
+:::
+:::
+
+
+## Linking {auto-animate="true"}
+
+::: columns
+::: {.column width="45%"}
+**Code**
+
+``` md
+Line breaks create a new paragraph. 
+
+Links can be hidden e.g. 
+[Stanford](https://stanford.edu/) or 
+not <https://stanford.edu/>.
+```
+:::
+
+::: {.column width="45%"}
+**Output**
+
+Line breaks create a new paragraph.
+
+Links can be hidden e.g.
+[Stanford](https://stanford.edu/) or 
+not <https://stanford.edu/>.
+:::
+:::
+
+
+## Images
+
+::: columns
+::: {.column width="60%"}
+**Code**
+
+**Relative** Path Image
+
+``` md
+![](img/stanford-cardinal-logo.svg)
+```
+
+**Absolute** Path Image
+
+``` md
+![](C:/jjb/img/stanford-cardinal-logo.svg)
+```
+
+[**Web** Image](https://en.wikipedia.org/wiki/Stanford_Cardinal#/media/File:Stanford_Cardinal_logo.svg)
+
+``` md
+![](https://en.wikipedia.org/../File:stanford-cardinal-logo.svg)
+```
+:::
+
+::: {.column width="30%"}
+**Output**
+
+![](assets/quarto-images/stanford-cardinal-logo.svg){fig-alt="The Stanford University cardinal logo." height="150px" text-align="center"}
+
+(Repeated 3 Times...)
+:::
+:::
+
+
+## Warning: Images
+
+::: callout-important
+**Relative** paths are the best to use to share your work with others as they are operating system independent. For example, do you have a user called "jjb" on your computer with a folder "img"?
+:::
+
+## Quotes
+
+::: columns
+::: {.column width="45%"}
+**Code**
+
+``` md
+> "Never gonna give you up,
+>  never gonna let you down..."
+>
+> --- Rick Astley
+```
+:::
+
+::: {.column width="45%"}
+**Output**
+
+> "Never gonna give you up, never gonna let you down..."
+>
+> --- Rick Astley
+
+:::
+:::
+
+
+## Math
+
+::: columns
+::: {.column width="45%"}
+**Code**
+
+``` md
+Inline math: 
+$a^2 + b^2 = c^2$
+
+Display math (centered math):
+$$1 - x = y$$
+```
+:::
+
+::: {.column width="45%"}
+**Output**
+Inline math: $a^2 + b^2 = c^2$
+
+Display math (centered math): $$1 - x = y$$
+:::
+:::
+
+
+## Header Sizes
+
++-------------------+----------------------------------------+
+| Markdown Syntax   | Output                                 |
++===================+========================================+
+| ```               | # Header 1 {.heading-output .removed}  |
+| # Header 1        |                                        |
+| ```               |                                        |
++-------------------+----------------------------------------+
+| ```               | ## Header 2 {.heading-output .removed} |
+| ## Header 2       |                                        |
+| ```               |                                        |
++-------------------+----------------------------------------+
+| ```               | ### Header 3 {.heading-output}         |
+| ### Header 3      |                                        |
+| ```               |                                        |
++-------------------+----------------------------------------+
+| ```               | #### Header 4 {.heading-output}        |
+| #### Header 4     |                                        |
+| ```               |                                        |
++-------------------+----------------------------------------+
+| ```               | ##### Header 5 {.heading-output}       |
+| ##### Header 5    |                                        |
+| ```               |                                        |
++-------------------+----------------------------------------+
+| ```               | ###### Header 6 {.heading-output}      |
+| ###### Header 6   |                                        |
+| ```               |                                        |
++-------------------+----------------------------------------+
+
+## Lists: Unordered
+
+::: callout-important
+Make sure a new line (space) exists between text and the first list item. For sublists or nested lists, indent **four spaces** to create a new level in the list.
+:::
+
+::: columns
+::: {.column width="45%"}
+**Code**
+
+``` md
+My **un**ordered list:
+
+- Write Selection Simulation
+- Conference Abstracts
+     - UseR
+     - Learning at Scale
+```
+:::
+
+::: {.column width="45%"}
+**Output**
+
+My **un**ordered list:
+
+-   Write Selection Simulation
+-   Conference Abstracts
+    -   UseR
+    -   Learning at Scale
+:::
+:::
+
+## Lists: Ordered
+
+::: callout-tip
+To simplify ordered lists and allow for moving items in the list around, use `1.` for each item. If a list needs to be broken, numbering is only continued if each entry is labeled using `1.`, `2.`, `3.`, ... format.
+:::
+
+::: columns
+::: {.column width="45%"}
+**Code**
+
+``` md
+My **ordered** list:
+
+1. Apples
+1. Bananas
+1. Chobani
+    1. Pineapple
+    1. Everything else
+```
+:::
+
+::: {.column width="45%"}
+**Output**
+
+My **ordered** list:
+
+1.  Apples
+2.  Bananas
+3.  Chobani
+    1.  Pineapple
+    2.  Everything else
+:::
+:::
+
+## Tables
+
+**Code**
+
+``` md
+| Left                    | Center          | Right   |
+|-------------------------|:---------------:|--------:|
+| Hey, check it out       | Colons provide  |    873  |
+| its **Markdown**        | alignment thus  |   1000  |
+| right in the table      | *centered* text |         |
+```
+
+**Output**
+
+| Left               |     Center      | Right |
+|--------------------|:---------------:|------:|
+| Hey, check it out  | Colons provide  |   873 |
+| its **Markdown**   | alignment thus  |  1000 |
+| right in the table | *centered* text |       |
+
+::: callout-tip
+`Visual` mode provides a [`Table` menu](https://quarto.org/docs/visual-editor/#editor-toolbar) to setup [quarto tables](https://quarto.org/docs/authoring/tables.html) or use the [table generator](https://www.tablesgenerator.com/markdown_tables) website.
+:::
+
+# Writing with Quarto
+
+## How Quarto Works
+
+Quarto handles literate programming by using a series of programs:
+
+![How Quarto Works [(Source)](https://quarto.org/docs/get-started/hello/images/rstudio-qmd-how-it-works.png)](assets/quarto-images/rstudio-qmd-how-it-works.png)
+
+-   **`knitr`** executes all code chunks and creates a new markdown (`.md`) file
+-   **`pandoc`** takes the markdown file generated and converts it to the desired format.
+-   **Render** inside of RStudio handles the interaction.
+
+## Source vs. Visual Mode
+
+::: columns
+::: {.column width="45%"}
+![Source Editing Mode](assets/quarto-images/rstudio-qmd-source-mode.png){fig-alt="Figure showing what a Quarto document looks like in Source Editing Mode."}
+:::
+
+::: {.column width="45%"}
+![Visual Editing Mode](assets/quarto-images/rstudio-qmd-visual-mode.png){fig-alt="Figure showing what a Quarto document looks like in Visual Editing Mode."}
+:::
+:::
+
+::: footer
+Visual Mode represents a **What You See Is What You Get (WYSIWYG) editor**. This mode is similar to Word.
+:::
+
+## Render a Quarto Document
+
+You can render a Quarto documents by using this shortcut in RStudio:
+
+-    Mac: `Cmd (⌘) + Shift (⇧) + K`
+-   ⊞ Win: `Ctrl + Shift + K`
+
+Or, you can press the "Render" button in either `Source` or `Visual` Mode.
+
+![Rendering a Quarto Document using "Render"](assets/quarto-images/rstudio-qmd-render-bar-source-mode-annotated.png){fig-alt="Press the render button to generate a new document."}
+
+## Code Chunks: Text + Code + Output
+
+**Example**
+
+```{{{r}}}
+#| label: chunk-label
+
+# code here
+```
+
+Insert chunk into `qmd` by typing or using **\[⌘/Cntrl + ⌥/Alt + I\]**
+
+::: columns
+::: {.column width="45%"}
+**Code**
+
+``` md
+We're embedding _R_ code
+**into** a report!!
+```
+
+```{{{r}}}
+#| label: add_nums
+1 + 2
+```
+:::
+
+::: {.column width="45%"}
+**Output**
+
+We're embedding *R* code **into** a report!!
+
+```{r}
+#| label: add_nums
+1 + 2
+```
+:::
+:::
+
+## (Aside) Pets or Livestock
+
+::: callout-important
+Please make sure to label your code chunks! It helps with debugging.
+:::
+
+![](assets/quarto-images/live-stock-or-caring.png){fig-alt="Describing each code chunk using either a label or omitting the label and its consequences in finding errors."}
+
+## Sample of Code Chunk Options
+
+::: columns
+::: {.column width="45%"}
+**Code**
+
+``` md
+Let's hide the _R_ code from
+showing up in the report!
+```
+
+<br>
+
+```{{{r}}}
+#| label: ex-hide
+#| echo: false
+x = 1:10
+y = 11:20
+plot(x, y)
+```
+:::
+
+::: {.column width="45%"}
+**Output**
+
+Let's hide the *R* code from showing up in the report!
+
+```{r}
+#| label: ex-hide
+#| echo: false
+x = 1:10
+y = 11:20
+plot(x, y)
+```
+:::
+:::
+
+## Customize Code Execution Options
+
++-----------+---------------------------------------------------------------------------------------------------+---------+
+| Option    | Description                                                                                       |         |
++===========+===================================================================================================+=========+
+| `eval`    | Evaluate the code chunk.                                                                          |         |
++-----------+---------------------------------------------------------------------------------------------------+---------+
+| `echo`    | Include the source code in output                                                                 |         |
++-----------+---------------------------------------------------------------------------------------------------+---------+
+| `output`  | Include code output results (`true`, `false`, or `asis`)                                          |         |
++-----------+---------------------------------------------------------------------------------------------------+---------+
+| `warning` | Include warnings in the output.                                                                   |         |
++-----------+---------------------------------------------------------------------------------------------------+---------+
+| `error`   | Include errors in the output (continues execution if error present).                              |         |
++-----------+---------------------------------------------------------------------------------------------------+---------+
+| `include` | Catch all for preventing any output (code or results) from being included (e.g. `include: false`) |         |
++-----------+---------------------------------------------------------------------------------------------------+---------+
+
+::: footer
+-   Additional quarto options: <https://quarto.org/docs/computations/execution-options.html>
+-   If using *R*, all the options of `knitr` are available: <http://yihui.name/knitr/options>
+:::
+
+## **eval** vs. **echo**
+
+::: columns
+::: {.column width="45%"}
+**Code**
+
+```{{{r}}}
+#| label: ex-orig
+x = 1:10; y = 11:20
+plot(x, y)
+```
+
+```{{r}}
+#| label: ex-not-run
+#| eval: false
+x = 1:10; y = 11:20
+plot(x, y)
+```
+
+```{{r}}
+#| label: ex-hide-code
+#| echo: false
+x = 1:10; y = 11:20
+plot(x, y)
+```
+:::
+
+::: {.column width="45%"}
+**Output**
+
+`ex-original` Output:
+
+```{r, echo = TRUE}
+#| label: ex-orig
+#| fig-height: 2.5
+x = 1:10; y = 11:20
+plot(x, y)
+```
+
+`ex-not-run` Output:
+
+```{r}
+#| label: ex-not-run
+#| eval: false
+#| echo: true
+x = 1:10; y = 11:20
+plot(x, y)
+```
+
+`ex-hide-code` Output:
+
+```{r}
+#| label: ex-hide-code
+#| echo: false
+#| fig-height: 2.5
+x = 1:10; y = 11:20
+plot(x, y)
+```
+:::
+:::
+
+## Inline code
+
+Enclose the *R* expression using `` `r ` ``.
+
+**Code:**
+
+```{=html}
+<div class="sourceCode">
+<pre class="sourceCode markdown">
+<code class="sourceCode markdown">
+There are &#96;r nrow(cars)&#96; observations in our data. 
+</code>
+</pre>
+</div>
+```
+**Output:**
+
+::: border
+There are `r nrow(cars)` observations in our data.
+:::
+
+::: callout-important
+If using `Visual` or `Source` mode, be advised the *R* expression will only substitute the value held by the variable when the Quarto document is **rendered**. That is, the value contained within the expression only appears in the **output** file.
+:::
+
+## Reference Code Chunk Variables Inline
+
+**Code:**
+
+```{{{r}}}
+#| label: calc-values
+#| echo: false
+x = 1:10
+x_mu = mean(x)
+x_sd = sd(x)
+```
+
+```{=html}
+<div class="sourceCode">
+<pre class="sourceCode markdown">
+<code class="sourceCode markdown">
+The _mean_ of **x** is  &#96;r x_mu&#96; and
+the _standard deviation_ is &#96;r x_sd&#96;.
+</code>
+</pre>
+</div>
+```
+**Output:**
+
+::: border
+The mean of **x** is 5.5 and the *standard deviation* is 3.02765.
+:::
+
+# Properties of a Quarto Document
+
+## Customization Header
+
+The title, author, date, output format, and editor type is stored in the **beginning** or **head** of the quarto document. The data is stored according to the **YAML Ain't Markup Language (YAML)**[^2] format.
+
+[^2]: The original name was Yet Another Markup Language. However, it was changed later in development to the present recursive acronym.
+
+``` yaml
+---
+title: "Hello Quarto"
+author: "JJB + Course"
+format: html
+editor: "visual"
+---
+```
+
+## Render Options
+
+Render as an **HTML** document
+
+``` {.yaml code-line-numbers="4"}
+---
+title: "Hello Quarto"
+author: "JJB + Course"
+format: html
+---
+```
+
+Render as a **PDF**
+
+``` {.yaml code-line-numbers="4"}
+---
+title: "Hello Quarto"
+author: "JJB + Course"
+format: pdf
+---
+```
+
+Render as a **Word** document
+
+``` {.yaml code-line-numbers="4"}
+---
+title: "Hello Quarto"
+author: "JJB + Course"
+format: docx
+---
+```
+
+## Multi-format Render Options
+
+Render one Quarto document to many output options like **HTML**, **Jupyter Notebook**, **PDF**, and **Word Document**.
+
+``` {.yaml code-line-numbers="4-8"}
+---
+title: "Hello Quarto"
+author: "JJB + Course"
+format: 
+  html: default
+  ipynb: default # new format!
+  pdf: default
+  docx: default
+---
+```
+
+::: callout-note
+Quarto supports many formats include [PowerPoint (PPT)](https://quarto.org/docs/reference/formats/presentations/pptx.html), [Revealjs](https://quarto.org/docs/reference/formats/presentations/revealjs.html), [Beamer](https://quarto.org/docs/reference/formats/presentations/beamer.html), [Rich Text Format (RTF)](https://quarto.org/docs/reference/formats/rtf.html), and on. For details, see [All Formats](https://quarto.org/docs/output-formats/all-formats.html).
+:::
+
+## Selecting a Single Render Format
+
+Using the <kbd>![](assets/quarto-images/rstudio-render-button.png){width="25" height="25" fig-alt="The Render Button Logo in RStudio"}</kbd> **Render** button's drop down menu, we can select a single output format to create.
+
+![Example of a Selecting a Single Output Format from the **Render** Menu dropdown.](assets/quarto-images/rstudio-qmd-multi-format-render.png){width="600" fig-alt="Dropdown menu showing the different render options."}
+
+## Customizing Specific Output Formats
+
+In this example, we customize the [`html`](https://quarto.org/docs/reference/formats/html.html) and [`docx`](https://quarto.org/docs/reference/formats/docx.html) format.
+
+``` {.yaml code-line-numbers="5-7,10-12"}
+---
+title: "Hello Quarto"
+author: "JJB + Course"
+format: 
+  html:
+    toc: true
+    code-fold: true
+  ipynb: default
+  pdf: default
+  docx: 
+    number-sections: true
+    highlight-style: github
+---
+```
+
+::: callout-note
+For individual format options, please find the format on the [All Formats](https://quarto.org/docs/output-formats/all-formats.html) page of the Quarto user guide.
+:::
+
+# A brief history
+
+## Iteration 1: Sweave
+
+-   Literate programming has been a huge focus of the *R* community.
+
+-   Officially, the [`Sweave` (.Rnw)](https://stat.ethz.ch/R-manual/R-patched/library/utils/doc/Sweave.pdf) system backed by *R*-core allowed for literate programming.
+
+-   However, the system required extensive use of [LaTeX](https://www.latex-project.org/), which marks up text, to combine *R* code with prose.
+
+-   Plus, there were a few useful options such as saving long running code chunk results to avoid needing to re-calculate the output that were missing.
+
+    Sample Sweave code chunk:
+
+    \<\<plot1, eval=FALSE, width=8, height=6\>\>= data(faithful) plot(faithful$eruptions, faithful$waiting) \@
+
+## Iteration 2: knitr & rmarkdown (.Rmd)
+
+-   Looking at the weakness of the Sweave feature set, the [`knitr`](https://cran.r-project.org/package=knitr) package was created with a focus on improving options within LaTeX.
+
+-   A little bit later, the [`rmarkdown`](https://cran.r-project.org/package=rmarkdown) package arrived on the scene to lower the barrier of entry by allowing for *markdown* to used to interweave `r` code and results.
+
+    Sample Rmarkdown code chunk:
+
+    `{{r plot1, eval=FALSE, width=8, height=6}} data(faithful) plot(faithful$eruptions, faithful$waiting)`
+
+## Iteration 3: Quarto (.qmd)
+
+-   The focus on using `rmarkdown` to create reports drew widespread acclaim after its debut in 2014. (See [J.J. describe `rmarkdown` in 2016.](https://www.youtube.com/watch?v=GG4pgtfDpWY))
+
+-   However, the name `rmarkdown` constrained the report format to just *R*.
+
+-   As data science is a **polygot** field, that is you need to speak more than one language (e.g. Python, R, Julia, SQL, C++, ...), the idea for a language agnostic framework was born.
+
+-   `Quarto` is the manifestation of being able to work with multiple languages *without* needing **R** (you could just use a Jupyter kernel).
+
+    Sample Quarto code chunk:
+
+    ````         
+    ``` {{r}}
+    #| label: plot1
+    #| eval: false
+    #| width: 8
+    #| height: 6
+    data(faithful)
+    plot(faithful$eruptions, faithful$waiting)
+    ```
+    ````
+
+## Summary
+
+-   Code for Humans
+    -   Write code in a human-friendly way for consumption by humans not computers with literate programming.
+    -   Scientists aim for the Golden Standard of experiments being **replicable**.
+    -   Statisticians/Data Scientists aim for being able to **reproducible** computations
+-   Markdown
+    -   Focuses on plain text that is human readable and customizable.
+-   Quarto
+    -   Combine *code* with a narrative analysis in a reproducible manner.

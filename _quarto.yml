@@ -3,8 +3,10 @@ project:
   output-dir: _site
 
 website:
-  title: "Pyodide, webR, & Quarto"
-  page-navigation: true
+  title: "Dynamic Interactions in STATS 352"
+  reader-mode: true
+  repo-url: https://github.com/coatless-talks/stats352-guest-lectures-on-dynamic-interactions-wasm
+  repo-actions: [edit, issue]
   navbar:
     background: light
     foreground: dark
@@ -18,31 +20,13 @@ website:
         href: https://github.com/coatless-talks/stats352-guest-lectures-on-dynamic-interactions-wasm
         aria-label: GitHub
   sidebar:
-    - title: "Contents"
-      style: "docked"
-      search: true
-      align: left
-      contents:
-        - section: "Pre-lectures"
-          contents:
-            - text: "1. Setup"
-              href: setup-environment.qmd
-        - section: "May 1st"
-          contents:
-            - text: "2. WebAssembly (WASM)"
-              href: setup-environment.qmd
-            - text: "3. Quarto"
-              href: setup-environment.qmd
-            - text: "4. Pyodide"
-              href: setup-environment.qmd
-        - section: "May 8th"
-          contents:
-            - text: "5. webR"
-              href: setup-environment.qmd
-
-format:
-  html:
-    toc: true
-
-
-
+    style: "floating"
+    search: true
+    contents: 
+      - section: "May 1st"
+        contents:
+          - text: "1. WebAssembly (WASM)"
+            href: day01a-wasm.qmd
+          - text: "2. Quarto"
+            href: day01b-quarto.qmd
+      - section: "May 8th"
