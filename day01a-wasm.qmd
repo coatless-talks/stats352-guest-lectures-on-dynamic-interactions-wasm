@@ -1,0 +1,1140 @@
+---
+title: "Dynamic Interactions for R and Python"
+subtitle: "using Quarto and WebAssembly"
+date: now
+author:
+  - name: James Balamuta
+format:
+  stanford-revealjs: 
+    scrollable: true
+webr: 
+  show-startup-message: false
+  cell-options:
+    editor-font-scale: 0.5
+filters:
+  - webr
+---
+
+# Intro
+
+## Housekeeping
+
+For those new to Revealjs, change slides using...
+
+- **Next slide**: spacebar, `j`, or right arrow
+- **Previous slide**: `k` or left arrow
+
+. . .
+
+Additional options: 
+
+- **Options Menu**: `m`
+- **Slide Overview**: `o`
+- **Zoom**: `alt` (windows) or `option` (mac)
+- [**Print slides**](https://quarto.org/docs/presentations/revealjs/presenting.html#print-to-pdf)
+
+## Lecture Objectives
+
+:::{.incremental}
+1. Understand the concept of Web Assembly (WASM) and its role in bringing data science languages to the web.
+2. Explore the use of WASM in conjunction with Pyodide for Python and webR for R to empower dynamic and reproducible interactions within Quarto documents.
+3. Engage in hands-on exercises and demonstrations to reinforce understanding and proficiency in leveraging Pyodide and webR for R within Quarto documents for dynamic content creation.
+:::
+
+## Before we begin, thank you ...
+
+- webR Core: **[George Stagg](https://github.com/georgestagg)** and [Lionel Henry
+](https://github.com/lionel-)
+- Pyodide Core: [Michael Droettboom](https://github.com/mdboom) and [Pyodide Contributors](https://zenodo.org/records/5156931)
+- Shinylive Core: [Winston Chang](https://github.com/wch/) and [Barret Schloerke](https://github.com/schloerke)
+- Quarto Core: J.J., Carlos, Charles, Christophe, Mickaël & Yihui
+- Emscripten: [Alon Zakai](https://www.linkedin.com/in/alonzakai/)
+- Contributors: [JooYoung Seo](https://ischool.illinois.edu/people/jooyoung-seo), [Ute Hahn](https://github.com/ute), [E. Eli Holmes](https://eeholmes.github.io/), [boB Rudis](https://rud.is/b/), and [Stathis Gennatas](https://github.com/egenn)
+
+## Agenda
+
+- What is WebAssembly (WASM)?
+- Why is running R and Python under WASM great?
+- How can webR and Pyodide WASM versions be used with Quarto?
+- Where can I publish my document?
+- What's upcoming?
+
+# WebAssembly (WASM)
+
+## What is WebAssembly? 
+
+:::{.columns}
+
+:::{.column width="50%"}
+- [WebAssembly](https://webassembly.github.io/spec/core/) is a **binary instruction format** designed with safety in mind
+  - Containerization/sandboxing (isolated "user-space" environments)
+- It has "near-native execution speed" in-browser or on system
+- Available in most web browsers
+:::
+
+:::{.column width="50%"}
+
+![](assets/wasm-images/webassembly.svg){fig-alt="The logo for WebAssembly" width="150%"}
+
+:::
+
+:::
+
+## "Hello World" with WebAssembly
+
+::: {.columns}
+
+:::{.column width="45%"}
+
+- WASM binaries are created using a human readable **WebAssembly Text** or `.wat` file for WebAssembly. 
+- This file is represented in the form of [symbolic expressions](https://developer.mozilla.org/en-US/docs/WebAssembly/Understanding_the_text_format#s-expressions) (c.f. Lisp family of languages like Clojure and Scheme)
+:::
+
+:::{.column style="width:55%; font-size:0.8em;"}
+
+**main.wat**
+
+```default
+(module
+  ;; Allocate a page of linear memory (64kb). Export it as "memory"
+  (memory (export "memory") 1)
+
+  ;; Write the string at the start of the linear memory.
+  (data (i32.const 0) "Hello, world!") ;; write string at location 0
+
+  ;; Export the position and length of the string.
+  (global (export "length") i32 (i32.const 12))
+  (global (export "position") i32 (i32.const 0)))
+```
+
+Convert to binary with:
+
+```sh
+wat2wasm main.wat -o main.wasm
+```
+
+Access with JavaScript:
+```js
+const wasmInstance =
+  new WebAssembly.Instance(wasmModule, {});
+const { memory, length, position } = wasmInstance.exports;
+const bytes = new Uint8Array(memory.buffer, position, length);
+const my_string = new TextDecoder('utf8').decode(bytes);
+
+console.log(my_string)
+```
+
+:::
+
+:::
+
+
+## WAT to WASM Demo
+
+![](assets/wasm-images/wat2wasm-hello-world.png){fig-alt="Demonstration of compiling a WAT into a WASM binary using the wat2wasm tool." fig-align="center"}
+
+<https://webassembly.github.io/wabt/demo/wat2wasm/>
+
+## Interactions
+
+![](assets/wasm-images/server-images/wasm-web-browser.png){fig-alt="Diagram showing the workflow for how the compiled WASM file is working within the browser"}
+
+## But, I have C/C++ code ...
+
+No worries! We can use **Emscripten**:
+
+- an LLVM-to-JavaScript/WebAssembly compiler 
+- that compiles C and C++ code into WebAssembly/WebAssembly System Interface (WASI)
+- to translate automatically
+
+:::{.callout-note}
+There are [more languages available](https://www.fermyon.com/wasm-languages/webassembly-language-support) for WASM compilation.
+:::
+
+## "Hello World" Emscripten Compilation
+
+Let's take for example **hello_world.c**
+
+```c
+#include <stdio.h>
+
+int main() {
+  printf("Hello, world!\n");
+  
+  return 0;
+}
+```
+
+We can convert it using Emscripten to web page with:
+
+```sh
+emcc hello_world.c -o hello_world.html
+```
+
+Previewing `hello_world.html` requires a **local server** to see output.
+
+## Output View of C Program
+
+![](assets/wasm-images/wasm-c-hello-world.png){fig-alt="Demo webpage showing the 'Hello, world!' example written in C translated to WASM"}
+
+## Is it that straightforward?
+
+There's a bit more nuance since _R_ and _Python_ extensively use Fortran in:
+
+- Basic Linear Algebra Subprograms (BLAS)
+- Linear Algebra Package (LAPACK)
+- And other subroutines ... 
+
+This brings in the need to use `llvm-flang`. For more, see George Stagg's [Fortran on WebAssembly](https://gws.phd/posts/fortran_wasm/) post.
+
+## Why WASM?
+
+- New in-browser experiences
+- Complex Web Applications
+- Universal execution
+
+## New Experience
+
+```{webr-r}
+1 + 1
+```
+
+## Complex Web Applications
+
+![](assets/wasm-images/container-to-wasm-demo.png){fig-alt="A screenshot showing a Docker container running underneath WASM in the web browser." fig-align="center"}
+
+🔗 <https://ktock.github.io/container2wasm-demo/> 
+
+(Warning: Minimum 200MB download!)
+
+# webR and Pyodide
+
+## WebAssembly and R: webR
+
+:::{.columns}
+
+:::{.column width="50%"}
+
+- [webR](https://docs.r-wasm.org/) is a version of the R interpreter built for WebAssembly.
+  - Created by **[George Stagg](https://github.com/georgestagg)** and [Lionel Henry](https://github.com/lionel-)
+- Allows for R code to be directly run in a web browser, _without an R server_.
+- Possible to even run R under [Node.js](https://nodejs.org/en).
+:::
+
+:::{.column width="50%"}
+
+![](assets/wasm-images/webr.png){alt="The webR hexagon logo" fig-align="center"}
+
+:::
+
+:::
+
+
+## webR REPL
+
+🔗 <https://webr.r-wasm.org/v0.3.3/>
+
+```{=html}
+<iframe allow="cross-origin-isolated" width="100%" height="80%" src="https://webr.r-wasm.org/v0.3.3/">
+</iframe>
+```
+
+## shinylive REPL
+
+🔗 <https://shinylive.io/r/editor>
+
+![](assets/wasm-images/r-shinylive-interface.png){fig-alt="A screenshot of the shinylive editor in a web browser" fig-align="center"}
+
+## Developer Tools
+
+:::{.r-fit-text}
+:::{.columns}
+
+:::{.column width="50%"}
+![](assets/gifs/chrome-open-web-developer-tools.gif){alt="An animated gif that shows the process of opening the Web Developer Tools in Chrome" fig-align="center"}
+:::
+
+:::{.column width="50%"}
+
+- Let's take a look at webR from just a JavaScript perspective, by using [Web Developer Tools](https://developer.chrome.com/docs/devtools/open) in Chrome. 
+- You can open it by using either: 
+  - macOS: `Command+Option+J`
+  - Windows: `Control+Shift+J`
+- In console, type:
+
+```js
+console.log("Hi there!")
+```
+
+:::
+
+:::
+:::
+
+## Using R in our Browser
+
+:::{.r-fit-text}
+:::{.columns}
+
+:::{.column width="55%"}
+![](assets/gifs/demo-webr-console.gif){alt="An animated gif that shows the initialization of webR and some calculations within Google Chrome's Developer Tools console." fig-align="center"}
+:::
+
+:::{.column width="45%"}
+
+- In our web developer console, we can initialize webR and perform calculations.
+- In console, type:
+
+```js
+var webRready = await import(
+  'https://webr.r-wasm.org/latest/webr.mjs'
+).then(
+  async ({ WebR }) => {
+    const webR = new WebR();
+    await webR.init();
+    return webR;
+  }
+);
+
+webRready.version
+
+let result = await webRready.evalR(
+  'set.seed(1); rnorm(10,5,1)'
+);
+let output = await result.toArray();
+output
+```
+
+:::
+
+:::
+:::
+
+## What are the values in R? 
+
+Open up your copy of R, what values are generated when running:
+
+```r
+set.seed(1); 
+rnorm(10,5,1)
+```
+
+Does it match with the webR output?
+
+## WebAssembly and Python: Pyodide
+
+:::{.columns}
+
+:::{.column width="50%"}
+
+- [Pyodide](https://pyodide.org/en/stable/) is a version of the Python interpreter built for WebAssembly.
+  - Created by [Michael Droettboom](https://github.com/mdboom) and [Pyodide Contributors](https://zenodo.org/records/5156931)
+- Features a robust seamless Javascript ⟺ Python foreign function interface.
+- Allows for **Python** code to be directly run in a web browser, _without a Python server_.
+:::
+
+:::{.column width="50%"}
+
+![](assets/wasm-images/pyodide-logo.png){alt="The Pyodide Project logo"  fig-align="center"}
+
+:::
+
+:::
+
+## Pyodide REPL
+
+🔗 <https://pyodide.org/en/stable/console.html>
+
+```{=html}
+<iframe allow="cross-origin-isolated" width="100%" height="80%" src="https://pyodide.org/en/stable/console.html">
+</iframe>
+```
+
+## JupyterLab
+
+🔗 [JupyterLite's JupyterLab Version](https://jupyterlite.readthedocs.io/en/stable/_static/lab/index.html)
+
+```{=html}
+<iframe allow="cross-origin-isolated" width="100%" height="80%" src="https://jupyterlite.readthedocs.io/en/stable/_static/lab/index.html">
+</iframe>
+```
+
+
+## JupyterNotebook
+
+🔗 [JupyterLite's JupyterNotebook Version](https://jupyterlite.readthedocs.io/en/stable/_static/notebooks/index.html?path=intro.ipynb)
+
+```{=html}
+<iframe allow="cross-origin-isolated" width="100%" height="80%" src="https://jupyterlite.readthedocs.io/en/stable/_static/notebooks/index.html?path=intro.ipynb">
+</iframe>
+```
+
+
+
+## JupyterLite's REPL
+
+🔗 [JupyterLite's REPL](https://jupyterlite.readthedocs.io/en/stable/_static/repl/index.html?toolbar=1&kernel=python&code=import%20this)
+
+```{=html}
+<iframe allow="cross-origin-isolated" width="100%" height="80%" src="https://jupyterlite.readthedocs.io/en/stable/_static/repl/index.html?toolbar=1&kernel=python&code=import%20this">
+</iframe>
+```
+
+## marimo
+
+🔗 <https://marimo.app/>
+
+```{=html}
+<iframe allow="cross-origin-isolated" width="100%" height="80%" src="https://marimo.app/">
+</iframe>
+```
+
+## Wait, what is a "server"?
+
+{{< fa server size="2x" >}} A **server** is a type of computer that is operating 24/7 on the internet that is interacting with your own computer.
+  
+. . . 
+
+We can think of servers in two ways: 
+
+1. **Compute**
+2. **Web**
+
+:::{.callout-note}
+There are more types of servers available; but, our discussion rests solely on those two.
+:::
+
+## Compute Servers
+
+:::{.columns}
+
+:::{.column width="50%"}
+
+![](assets/gifs/compute-server-running-r-once-smaller.gif){fig-alt="An animated gif showing how users send R code to the server and the server sends back results."}
+:::
+
+:::{.column}
+
+- **Compute Servers** focus on performing calculations using software. 
+  - High Performance Computing (HPC) Clusters are perfect example.
+  - Also [Posit Workbench/RStudio Server](https://posit.co/products/enterprise/workbench/) or [JupyterHub](https://jupyter.org/hub).
+
+:::
+
+:::
+
+
+## Web Servers
+
+
+:::{.columns}
+
+:::{.column width="50%"}
+
+![](assets/gifs/webserver-sending-r-once-smaller.gif){fig-alt="An animated gif showing how the server sends a copy of R to the end users computer and, then, the user's computer runs the R code locally."}
+:::
+
+:::{.column}
+
+- **Web Servers** focus on serving documents to users. 
+  - [GitHub Pages](https://pages.github.com/), [Netlify](https://www.netlify.com/), and [QuartoPub](https://quartopub.com/) are examples of a static web host.
+  - Once the handoff is complete, no need to talk again.
+:::
+
+:::
+
+## Data Science with Web Servers
+
+:::{.columns}
+
+:::{.column width="50%"}
+![](assets/wasm-images/server-images/compute-server.png){fig-alt="An static image showing how the server sends a copy of R to the end users computer and, then, the user's computer runs the R code locally."}
+:::
+
+:::{.column style="width:49%; border: 1px solid green;"}
+![](assets/wasm-images/server-images/web-server.png){fig-alt="An static image showing how the server sends a copy of R to the end users computer and, then, the user's computer runs the R code locally."}
+
+:::
+
+:::
+
+::: {.callout-note}
+We can substitute the R with Python in these diagrams.
+:::
+
+
+## Trade-offs: Internet
+
+- Paradigm shifted from installed software requiring **a single download** to **multiple downloads**.
+  - Internet bandwidth is precious (~1 TB Comcast cap, limited WiFi, slow internet).
+- Requires an internet connection at the start. 
+  - Need to obtain all resources over an internet connection.
+- Lack of persistency; temporal by nature.
+  - Refresh page, poof work is gone!
+
+## Trade-offs: Privacy
+
+- Nothing is secret as [everything is in the source](https://quarto-webr.thecoatlessprofessor.com/qwebr-internal-cell.html#hidden-solution-checking-of-student-work).
+
+![](assets/wasm-images/privacy-is-no-more.png){fig-alt="An static image showing the source of a hidden solution on a page." fig-align="center""}
+
+## Trade-offs: Environment
+
+- **Universal environments**
+  - Everyone has the same environment.
+  - Not an exact replica of downloaded software.
+  - Shinier computers perform better!
+
+## How many _R_ packages are available? 
+
+🔗 <https://repo.r-wasm.org> (Warning: Minimum 75 MB)
+
+![](assets/wasm-images/repo-r-wasm.png){fig-alt="A screenshot showing the webR project's binary WASM R package repository." fig-align="center"}
+
+## Daily _R_ packages
+
+[r-universe.dev](https://ropensci.org/blog/2023/11/17/runiverse-wasm/) offers binaries on commit:
+
+[![](assets/wasm-images/r-universe-wasm-webr-ggplot2.png){fig-alt="A screenshot showing the webR binary on the r-universe.dev website alongside of an application of webR to download data." fig-align="center"}](https://tidyverse.r-universe.dev/ggplot2)
+
+## Or, use a modified GitHub Action
+
+- Not able to sync with <https://r-universe.dev>?
+- No worries! The compilation can be done locally or in a GitHub Action. 
+  - [rwasm: Compiling R packages](https://r-wasm.github.io/rwasm/articles/rwasm.html#compiling-r-packages-for-webassembly)
+  - [Unified GH Workflow with `{pkgdown}`](https://github.com/coatless-tutorials/webr-unified-gh-workflow)  
+- More at the end... 
+
+## How many _Python_ packages are available? 
+
+Outside of the [Python packages built-in to Pyodide](https://pyodide.org/en/stable/usage/packages-in-pyodide.html), the number of Python packages varies as there is no central repository.
+
+- If a Python package is "pure" (`*py3-none-any.whl`), then the package can be used as-is.
+  - e.g. [`basic-colormath`](https://pypi.org/project/basic-colormath/#files) on [PyPI](https://pypi.org)
+- Otherwise, the packages must be [compiled for Pyodide](https://pyodide.org/en/stable/development/new-packages.html) under specific Python and Emscripten versions.
+  - e.g. `*-cp310-cp310-emscripten_3_1_27_wasm32.whl`
+
+# Quarto and quarto-{pyodide,webr} 
+
+## Quarto 
+
+:::{.columns}
+
+
+:::{.column width="50%"}
+- Next generation publishing system.
+- Unify and extends the R Markdown ecosystem.
+- **Develop** and **Switch** formats without hassle.
+:::
+
+
+:::{.column width="50%"}
+![](assets/wasm-images/logo-quarto.png){fig-alt="The Quarto hexagon logo."  fig-align="center"}
+
+:::
+
+
+:::
+
+## Quarto Extensions
+
+- Quarto Extensions are a powerful way to modify and extend the behavior of Quarto.
+  - Themes ([`quarto-stanford`](https://github.com/coatless-quarto/stanford)), Filters ([`quarto-{webr,pyodide}`](https://github.com/coatless/quarto-webr)), Shortcodes ([`quarto-embedio`](https://github.com/coatless-quarto/embedio)), Revealjs Plugins, Journals ([`quarto-jss`](https://github.com/quarto-journals/jss)).
+- These extensions can be created and distributed by anyone.
+  - [Official List](https://quarto.org/docs/extensions/) and a [topics list](https://m.canouil.dev/quarto-extensions/)
+- Extensions are usually written using [Lua](https://www.lua.org/manual/5.3/) as a [Pandoc Lua Filter](https://pandoc.org/lua-filters.html)
+
+## How the quarto-{webr,pyodide} extension works
+
+![](assets/wasm-images/animated-quarto-webr-workflow-once.gif){fig-alt="An animated GIF showing how the `quarto-webr` extension works with Quarto, webR, and a static server." fig-align="center"}
+
+## Use cases
+
+- For {quarto-webr}, we've seen a lot of adoption within the R community.
+  - Many great [community examples](https://quarto-webr.thecoatlessprofessor.com/qwebr-community-examples.html) of the project's use.
+- For {quarto-pyodide}, the extension is relatively new (~Feb 2024)
+   - Prof. Kendra Burbank's [STAT 24320 course notes](https://kburbank.github.io/stat24320/) ([Source](https://github.com/KBurbank/stat24320))
+   - Prof Louis Moresi's [EMSC program](https://anu-rses-education.github.io/EMSC-getting-going-with-python/book/Basics/Ex1-IntroWebPython.html) ([Source](https://github.com/ANU-RSES-Education/EMSC-getting-going-with-python))
+   - Rémi Genet's [Introduction to Python (French)](https://remigenet.github.io/Introduction-Python/) (
+     [Code adoption](https://github.com/remigenet/Introduction-Python/commit/4f01e38d69287682ebc52dacf125413354a5087e#diff-4bb7e59494d3ed710da3c018cbfeeb68127fb60fb6bda1c491ceaabc82cc40cc))
+
+## Next steps
+
+- The next slides focus on **authoring** documents with dynamic interactions. 
+- We'll go through the process for installing and using a Quarto extension.
+- Alternatively, you can use our authoring codespace. Discussed next...
+
+## Authoring Codespace
+
+If you are comfortable with VS Code, you can jump right into an authoring Codespace by clicking on the following button:
+
+[![](https://github.com/codespaces/badge.svg){fig-alt="Open in GitHub Codespaces" fig-align="center"}](https://codespaces.new/coatless-quarto/quarto-webr-pyodide-demo?quickstart=1)
+
+**Note:** Codespaces are available to Students and Teachers for free [up to 180 core hours per month](https://docs.github.com/en/education/manage-coursework-with-github-classroom/integrate-github-classroom-with-an-ide/using-github-codespaces-with-github-classroom#about-github-codespaces) through [GitHub Education](https://education.github.com/). Otherwise, you will have [up to 60 core hours and 15 GB free per month](https://github.com/features/codespaces#pricing).
+
+
+## Install the {quarto-webr} Extension
+
+:::{.incremental}
+1. Open or Create an [RStudio Quarto Project](https://quarto.org/docs/tools/rstudio.html#projects)
+2. Navigate to the Terminal tab in lower left side of RStudio
+3. Type the install command:
+
+   `quarto add coatless/quarto-webr` 
+
+   and press enter.
+   ![](assets/wasm-images/qwebr-install-extension.png)
+4. Voila! It's installed.
+:::
+
+## Quarto Project Structure
+
+The project directory should contain the following structure:
+
+```sh
+.
+├── _extensions
+│   └── coatless/quarto-webr # Added by 'quarto add'
+├── _quarto.yml              # Created by 'quarto create'
+└── webr-demo.qmd            # Quarto Document with webR
+```
+
+:::{.callout-important}
+If the `_extensions` directory is not found within a Quarto project, 
+the project is **not** using any extensions!
+:::
+
+## Using quarto-webr - 4 Steps {auto-animate="true"}
+
+:::columns
+:::{.column style="max-height: 1000px; width=50%;"}
+````{.md code-line-numbers="4"}
+---
+title: webR in Quarto HTML Docs
+format: html
+engine: knitr
+---
+
+This is an R-enabled code cell 
+in a Quarto HTML document.
+
+```{{r}}
+fit = lm(mpg ~ am, data = mtcars)
+
+summary(fit)
+```
+````
+:::
+
+:::{.column style="font-size: .85em; width=50%;"}
+
+1. Add `engine: knitr`
+:::
+:::
+
+## Using quarto-webr - 4 Steps {auto-animate="true"}
+
+:::columns
+:::{.column style="max-height: 1000px; width=50%;"}
+````{.md code-line-numbers="5-6"}
+---
+title: webR in Quarto HTML Docs
+format: html
+engine: knitr
+filters:
+  - webr
+---
+
+This is an R-enabled code cell 
+in a Quarto HTML document.
+
+```{{r}}
+fit = lm(mpg ~ am, data = mtcars)
+
+summary(fit)
+```
+````
+:::
+
+:::{.column style="font-size: .85em; width=50%;"}
+
+1. Add `engine: knitr`
+1. Add the `webr` Filter 
+:::
+:::
+
+
+## Using quarto-webr - 4 Steps {auto-animate="true"}
+
+:::columns
+:::{.column style="max-height: 1000px; width=50%;"}
+````{.md code-line-numbers="12"}
+---
+title: webR in Quarto HTML Docs
+format: html
+engine: knitr
+filters:
+  - webr
+---
+
+This is a webR-enabled code cell 
+in a Quarto HTML document.
+
+```{{webr-r}}
+fit = lm(mpg ~ am, data = mtcars)
+
+summary(fit)
+```
+````
+:::
+
+:::{.column style="font-size: .85em; width=50%;"}
+
+1. Add `engine: knitr`
+1. Add the `webr` Filter 
+1. Use `{webr-r}` instead of `{r}`
+:::
+:::
+
+## Using quarto-webr - 4 Steps {auto-animate="true"}
+
+:::columns
+:::{.column style="max-height: 1000px; width=50%;"}
+````{.md}
+---
+title: webR in Quarto HTML Docs
+format: html
+engine: knitr
+filters:
+  - webr
+---
+
+This is a webR-enabled code cell 
+in a Quarto HTML document.
+
+```{{webr-r}}
+fit = lm(mpg ~ am, data = mtcars)
+
+summary(fit)
+```
+````
+:::
+
+:::{.column style="font-size: .85em; width=50%;"}
+
+1. Add `engine: knitr`
+1. Add the `webr` Filter 
+1. Use `{webr-r}` instead of `{r}`
+1. Render the document!
+  -  Mac: `Cmd (⌘) + Shift (⇧) + K`
+  - ⊞ Win: `Ctrl + Shift + K`
+
+Or, you can press the "Render" button ![Rendering a Quarto Document using "Render"](assets/quarto-images/rstudio-render-button.png){fig-alt="Press the render button to generate a new document." height="45px"}
+
+:::
+:::
+
+## quarto-webr: In Action
+
+![`quarto-webr` Filter in Action](assets/gifs/quarto-webr-demo-gif.gif){fig-alt="An animated GIF showing a Quarto document inside of RStudio augmented by the {quarto-webr} extension having different values placed inside of its code cell."}
+
+## What about Python? Similar story...
+
+:::{.r-fit-text}
+
+:::{.fragment}
+First, install the `quarto-pyodide` extension using terminal with:
+
+```sh
+quarto add coatless-quarto/pyodide
+```
+:::
+
+:::{.fragment}
+Next, register the `pyodide` extension in the Quarto Document with:
+
+  ```{.md code-line-numbers="4-5"}
+  ---
+  title: Pyodide in Quarto HTML Docs
+  format: html
+  filters:
+    - pyodide
+  ---
+  ```
+:::
+
+
+:::{.fragment}
+Finally, use `{pyodide-python}` instead of `{python}`
+:::
+
+:::
+
+## quarto-pyodide: In Action
+
+![`quarto-pyodide` Filter in Action](assets/gifs/quarto-pyodide-initial-demo.gif){fig-alt="An animated GIF showing a Quarto document inside of VS Code augmented by the {quarto-pyodide} extension having different Python code placed inside of its code cell generating a variety of outputs."}
+
+## Options for `quarto-webr`
+
+There are two types of options in `quarto-webr`:
+
+- [Cell-level](https://quarto-webr.thecoatlessprofessor.com/qwebr-cell-options.html): Customize how code is evaluated inside of the cell.
+- [Document-level](https://quarto-webr.thecoatlessprofessor.com/qwebr-meta-options.html): Globally set different document properties. 
+
+:::{.callout-note}
+The cell-level options use a custom code cell parser called [`quarto-codecelloptions`](https://github.com/coatless-quarto/codecelloptions) and, thus, are not exactly 1-to-1 with Quarto options.
+:::
+
+## Document-level options
+
+For example, we could disable the status indicator and pre-load different R packages by specifying in the document's YAML header the `webr` meta key:
+
+```{.md code-line-numbers="5-7"}
+---
+title: webR in Quarto HTML Documents
+format: html
+engine: knitr
+webr: 
+  show-startup-message: false    # Disable displaying webR status 
+  packages: ['ggplot2', 'dplyr'] # Install R packages on document open
+filters:
+  - webr
+---
+```
+
+## Cell-level options
+
+Cell-level options direct the execution and output of executable code blocks.
+These options are specified within comments at the top of a code block by using a hashpipe, e.g. `#| option: value`.
+
+
+````{.md code-line-numbers="2-3"}
+```{webr-r}
+#| autorun: true
+#| fig-width: 5
+
+1 + 1
+plot(pressure)
+```
+````
+
+## context option
+
+- The `context` cell option handles how the code is executed and displayed to a user.
+- The default context is `interactive`, which gives us a runnable code cell.
+- Other options for `context` are:
+  - `context: output` which only shows the output
+  - `context: setup` which shows neither output nor code.
+- [More details](https://quarto-webr.thecoatlessprofessor.com/qwebr-internal-cell.html)...
+
+## Demos
+
+- Let's take a look at how different cell and document options behave by looking at the [Feature Demos](https://quarto-webr.thecoatlessprofessor.com/demos/qwebr-feature-demos.html) for `quarto-webr`.
+- Alternatively, we can see examples with [`quarto-pyodide`'s interactive cell](https://quarto.thecoatlessprofessor.com/pyodide/qpyodide-code-cell-demo.html). 
+
+:::{.callout-important}
+`{quarto-pyodide}` has yet to receive the options treatment! We only make available an interactive editor.
+:::
+
+# Publishing
+
+## Sharing Work
+
+- Once you are satisfied with the Quarto document, it's time to publish your work!
+- The publishing step is important as the documents need to be viewed under the guise of a server.
+  - Directly accessing the `.html` will likely cause the app 
+- There are multiple options for publishing with Quarto, and we'll present two of them. 
+
+## Publish Options
+
+::: panel-tabset
+#### GitHub Pages
+
+To make your Quarto document accessible on [GitHub Pages via Quarto](https://quarto.org/docs/publishing/github-pages.html), use the following command in your terminal:
+
+```sh
+quarto publish gh-pages
+```
+
+This option is great if you want to share your document through a GitHub Pages website.
+
+#### Quarto Pub
+
+Alternatively, you can publish your Quarto document on [Quarto Pub via Quarto](https://quarto.org/docs/publishing/quarto-pub.html). Use the following command in your terminal:
+
+```sh
+quarto publish quarto-pub
+```
+
+This option provides you with a shareable link for easy access by others and is a good choice if you prefer a dedicated platform for your documents.
+:::
+
+# Continuously Publishing
+
+## Continous Deployment
+
+:::{.r-fit-text}
+**Continuous deployment (CD)** is the notion that each time a collaborator contributes
+code into a branch of the repository, the code is automatically built and put into a
+production environment. 
+
+### Overview of Services
+
+- [GitHub](https://github.com): Enables version control and integrates with ... 
+- Continuous deployment (CI) services that **build** and **deploy** code on each pushed commit
+   - [GitHub Actions](https://github.com/features/actions): GitHub's built-in 
+   way. (Preferred)
+   - [Azure Pipelines](https://azure.microsoft.com/en-us/products/devops/pipelines): Microsoft's Azure cloud version
+:::
+
+## Prebuilt GitHub Actions
+
+- GitHub Actions have already been created for various [Quarto](https://github.com/quarto-dev/quarto-actions), [R language](https://github.com/r-lib/actions), [webR](https://github.com/r-wasm/actions), and [Pyodide](https://github.com/pyodide/pyodide-actions) workflows.
+- These actions provide a way to quickly setup the necessary configuration files for the repository to be continuously deployed.
+  - Actions are programmed through a combination of YAML, Shell, Node.js, or Dockerfiles.
+- Moreover, these actions usually contain the "best practices" for deployment. 
+
+
+## Using a GitHub Action
+
+Let's say we want to use a GitHub action for building a webR package alongside a pkgdown website using GitHub, inside of our RStudio package project we would run:
+
+```r
+# install.packages("usethis")
+usethis::use_github_action(
+  "https://raw.githubusercontent.com/r-wasm/actions/main/examples/rwasm-binary-and-pkgdown-site.yml"
+)
+```
+
+This copies the [YAML file for the action](https://github.com/r-wasm/actions/blob/main/examples/rwasm-binary-and-pkgdown-site.yml) and sets it up inside of the `.github/workflows` folder, e.g.
+
+```sh
+.github/workflows/rwasm-binary-and-pkgdown-site.yml
+```
+
+## What about just publishing for Quarto?
+
+- The prior example is great for package development.
+- But, what if we just wanted to publish our Quarto document?
+- How can we automatically **render** and **deploy** our Quarto documents to GitHub Pages?
+  - We'll need to build a custom workflow!
+- The next few slides cover the GitHub Action workflows
+  used in the [demo repo](https://github.com/coatless-quarto/quarto-webr-pyodide-demo).
+
+## Stepping through the Action: Triggers
+
+:::{.columns}
+
+:::{.column style="width: 50%; font-size:0.8em"}
+```yaml
+on:
+  push:
+    branches: [main, master]
+  release:
+      types: [published]
+  workflow_dispatch: {}
+    
+name: demo-quarto-document
+```
+:::
+
+:::{.column style="width: 45%; font-size: 0.5em"}
+
+Action will run on either: a push, pull request, or manual trigger.
+
+It'll run under `demo-quarto-document` name.
+
+:::
+
+:::
+
+## Stepping through the Action: Config
+
+:::{.columns}
+
+:::{.column style="width: 50%; font-size:0.8em"}
+```yaml
+# ... previous slide
+
+jobs:
+  demo-quarto-document:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: quarto-website-${{ github.event_name != 'pull_request' || github.run_id }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+```
+:::
+
+:::{.column style="width: 50%; font-size: 0.5em"}
+
+Next, we'll specify what operating system will be used, restrict multiple jobs from running, and describe the permissions the workflow has.
+
+:::
+
+:::
+
+
+## Stepping through the Action: Setup R
+
+:::{.columns}
+
+:::{.column style="width: 50%; font-size:0.8em"}
+```yaml
+# ... previous slide
+steps:
+  - name: "Check out repository"
+    uses: actions/checkout@v4
+
+  - name: "Setup pandoc"
+    uses: r-lib/actions/setup-pandoc@v2
+
+  - name: "Setup R"
+    uses: r-lib/actions/setup-r@v2
+
+  - name: "Setup R dependencies for Quarto's knitr engine"
+    uses: r-lib/actions/setup-r-dependencies@v2
+    with:
+      packages:
+        any::knitr
+        any::rmarkdown
+        any::downlit
+        any::xml2
+```
+:::
+
+:::{.column style="width: 45%; font-size: 0.5em"}
+
+Next, we obtain a copy of the repository. 
+
+Then, we specify the different software dependencies for the project.
+
+As we're using the `engine: knitr`, this requires additional R package dependencies.
+
+:::
+
+:::
+
+
+
+## Stepping through the Action: Quarto
+
+:::{.columns}
+
+:::{.column style="width: 50%; font-size:0.85em"}
+```yaml
+# ... previous slides
+- name: "Set up Quarto"
+  uses: quarto-dev/quarto-actions/setup@v2
+
+- name: "Install Quarto extensions"
+  shell: bash
+  run: |
+    quarto add --no-prompt coatless/quarto-webr@0.4.1
+
+- name: "Render working directory"
+  uses: quarto-dev/quarto-actions/render@v2
+
+- name: "Upload Pages artifact"
+  uses: actions/upload-pages-artifact@v2
+  with: 
+    retention-days: 1
+
+- name: "Deploy to GitHub Pages"
+  id: deployment
+  uses: actions/deploy-pages@v2
+```
+:::
+
+:::{.column style="width: 45%; font-size: 0.5em"}
+
+In the next part of the file, we focus on Quarto:
+
+1. Installing Quarto 
+1. Installing the `quarto-webr` Quarto extension
+    - This step can be ommitted; but, we want future updates!
+1. Render any `.qmd` files in the current directory
+
+:::
+
+:::
+
+## Stepping through the Action: Deploy
+
+:::{.columns}
+
+:::{.column style="width: 50%; font-size:0.85em"}
+```yaml
+# ... previous slides
+- name: "Upload Pages artifact"
+  uses: actions/upload-pages-artifact@v2
+  with: 
+    retention-days: 1
+
+- name: "Deploy to GitHub Pages"
+  id: deployment
+  uses: actions/deploy-pages@v2
+```
+:::
+
+:::{.column style="width: 45%; font-size: 0.5em"}
+
+Finally, we take our rendered Quarto documents and create a zip archive.
+
+Then, we deploy that archive onto GitHub pages.
+:::
+
+:::
+
+## Enable GitHub Pages
+
+![](assets/wasm-images/enable-github-pages-via-actions.png){fig-alt="A screenshot showing the settings page of a GitHub repository to setup deployment onto GitHub Pages of the content using a GitHub Action." fig-align="center"}
+
+
+## View the Deployed Documents
+
+From here, our Quarto augmented documents should be available for everyone! 
+
+<https://quarto.thecoatlessprofessor.com/quarto-webr-pyodide-demo/>
+
+
+# Concluding
+
+## Future Work 
+
+- Improve the `quarto-pyodide` extension features.
+  - Move toward a message messaging interface.
+  - Improve graphing support
+- Formalize a built-in code exercise checking feature. 
+- Push toward native code APIs.
+- Explore incorporating dynamic input toggles alongside code cells.
+
+## Prototype Dynamics
+
+![](assets/gifs/quarto-webr-demo-dynamic-input-control-widgets.gif){fig-alt="An animated GIF showing a demo of a control slider alongside of an interactive code cell. As the control slider is moved, the code cell is run and the output of a normal distribution histogram is shown."}
+
+## Slides and Code
+
+:::{.columns}
+
+:::{.column}
+![](assets/wasm-images/wasm-qr-repo.png){fig-alt="QR Code that holds the link to the presentation's GitHub repository."}
+:::
+
+:::{.column}
+These slides were made using [Quarto](https://quarto.org/)'s [Revealjs](https://quarto.org/docs/presentations/revealjs/) format under the [`{quarto-stanford}`](https://github.com/coatless-quarto/stanford) theme.
+
+See source of the presentation on [GitHub](https://github.com/coatless-talks/stats352-guest-lectures-on-dynamic-interactions-wasm)
+
+:::
+
+:::
+
+
+## Thank you! Questions? 
+
+Thank you for the invitation to talk today! 
+
+Questions [{{< fa question size=2x >}}]{style="color:#80221c"}
