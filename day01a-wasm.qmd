@@ -33,6 +33,24 @@ Additional options:
 - **Zoom**: `alt` (windows) or `option` (mac)
 - [**Print slides**](https://quarto.org/docs/presentations/revealjs/presenting.html#print-to-pdf)
 
+## Slides and Code
+
+:::{.columns}
+
+:::{.column}
+![](assets/wasm-images/wasm-qr-repo.png){fig-alt="QR Code that holds the link to the presentation's GitHub repository."}
+:::
+
+:::{.column}
+These slides were made using [Quarto](https://quarto.org/)'s [Revealjs](https://quarto.org/docs/presentations/revealjs/) format under the [`{quarto-stanford}`](https://github.com/coatless-quarto/stanford) theme.
+
+See source of the presentation on [GitHub](https://github.com/coatless-talks/stats352-guest-lectures-on-dynamic-interactions-wasm)
+
+:::
+
+:::
+
+
 ## Lecture Objectives
 
 :::{.incremental}
@@ -82,6 +100,8 @@ Additional options:
 
 ## "Hello World" with WebAssembly
 
+:::{.r-fit-text}
+
 ::: {.columns}
 
 :::{.column width="45%"}
@@ -128,6 +148,7 @@ console.log(my_string)
 
 :::
 
+:::
 
 ## WAT to WASM Demo
 
@@ -153,25 +174,26 @@ There are [more languages available](https://www.fermyon.com/wasm-languages/weba
 
 ## "Hello World" Emscripten Compilation
 
-Let's take for example **hello_world.c**
+Let's take for example the **hello_world.c** program
 
 ```c
 #include <stdio.h>
 
 int main() {
   printf("Hello, world!\n");
-  
+
   return 0;
 }
 ```
 
-We can convert it using Emscripten to web page with:
+We can convert it using Emscripten to a webpage with:
 
 ```sh
 emcc hello_world.c -o hello_world.html
 ```
 
-Previewing `hello_world.html` requires a **local server** to see output.
+Previewing the generated webpage, e.g. **hello_world.html**, requires a **local server** to see output.
+
 
 ## Output View of C Program
 
@@ -179,13 +201,18 @@ Previewing `hello_world.html` requires a **local server** to see output.
 
 ## Is it that straightforward?
 
+:::{.r-fit-text}
 There's a bit more nuance since _R_ and _Python_ extensively use Fortran in:
 
 - Basic Linear Algebra Subprograms (BLAS)
+  - Basic vector and matrix operations
+  - "AXPY" operation, $\alpha \mathbf{X} + \mathbf{Y}$
 - Linear Algebra Package (LAPACK)
+  - Solving systems, eigenvalue and singular value problems
 - And other subroutines ... 
 
 This brings in the need to use `llvm-flang`. For more, see George Stagg's [Fortran on WebAssembly](https://gws.phd/posts/fortran_wasm/) post.
+:::
 
 ## Why WASM?
 
@@ -215,10 +242,12 @@ This brings in the need to use `llvm-flang`. For more, see George Stagg's [Fortr
 
 :::{.column width="50%"}
 
+:::{.r-fit-text}
 - [webR](https://docs.r-wasm.org/) is a version of the R interpreter built for WebAssembly.
   - Created by **[George Stagg](https://github.com/georgestagg)** and [Lionel Henry](https://github.com/lionel-)
 - Allows for R code to be directly run in a web browser, _without an R server_.
 - Possible to even run R under [Node.js](https://nodejs.org/en).
+:::
 :::
 
 :::{.column width="50%"}
@@ -271,21 +300,142 @@ console.log("Hi there!")
 :::
 :::
 
-## Using R in our Browser
+## Using R in our Browser: Initialize
 
 :::{.r-fit-text}
 :::{.columns}
 
-:::{.column width="55%"}
-![](assets/gifs/demo-webr-console.gif){alt="An animated gif that shows the initialization of webR and some calculations within Google Chrome's Developer Tools console." fig-align="center"}
+:::{.column width="50%"}
+![](assets/gifs/demo-webr-console-01-webr-initialize.gif){alt="An animated gif that shows the initialization of webR and some calculations within Google Chrome's Developer Tools console." fig-align="center"}
 :::
 
-:::{.column width="45%"}
+:::{.column width="50%"}
 
-- In our web developer console, we can initialize webR and perform calculations.
+- In our web developer console, we need to first load and initialize webR.
 - In console, type:
 
 ```js
+var webRready = await import(
+  'https://webr.r-wasm.org/latest/webr.mjs'
+).then(
+  async ({ WebR }) => {
+    const webR = new WebR();
+    await webR.init();
+    return webR;
+  }
+);
+```
+
+:::
+
+:::
+:::
+
+## Using R in our Browser: Version
+
+:::{.r-fit-text}
+
+:::{.columns}
+
+:::{.column width="50%"}
+
+![](assets/gifs/demo-webr-console-02-webr-version-string.gif){alt="An animated gif that shows obtaining the current webR version within Google Chrome's Developer Tools console." fig-align="center"}
+
+:::
+
+:::{.column width="50%"}
+
+- Next, let's determine what version of webR in use. 
+  - Under the `latest` tag, we're using the development version.
+  - We can change `latest` to a specific version, e.g. `v0.3.3`, to pin the evaluation.
+
+- In console, type:
+
+```{.js code-line-numbers="11"}
+var webRready = await import(
+  'https://webr.r-wasm.org/latest/webr.mjs'
+).then(
+  async ({ WebR }) => {
+    const webR = new WebR();
+    await webR.init();
+    return webR;
+  }
+);
+
+webRready.version
+```
+
+:::
+
+:::
+:::
+
+## Using R in our Browser: Evaluate
+
+:::{.r-fit-text}
+
+:::{.columns}
+
+:::{.column width="50%"}
+
+![](assets/gifs/demo-webr-console-03-webr-evalr.gif){alt="An animated gif that shows the initialization of webR and some calculations within Google Chrome's Developer Tools console." fig-align="center"}
+
+:::
+
+:::{.column width="50%"}
+
+- Let's try evaluating some R code 
+  using our webR instance.
+
+- In console, type:
+
+```{.js code-line-numbers="13-15"}
+var webRready = await import(
+  'https://webr.r-wasm.org/latest/webr.mjs'
+).then(
+  async ({ WebR }) => {
+    const webR = new WebR();
+    await webR.init();
+    return webR;
+  }
+);
+
+webRready.version
+
+webRready.evalR(
+  'set.seed(1); rnorm(10,5,1)'
+);
+```
+
+:::
+
+:::
+
+:::
+
+## Using R in our Browser: Await
+
+:::{.r-fit-text}
+
+:::{.columns}
+
+:::{.column width="50%"}
+
+![](assets/gifs/demo-webr-console-04-await-result.gif){alt="An animated gif that shows the calculation with webR being performed within Google Chrome's Developer Tools console." fig-align="center"}
+
+:::
+
+:::{.column width="50%"}
+
+- Evaluation involves awaiting **promise resolution** with `await`.
+- **Promises** are integral to **asynchronous programming**.
+   - Offloading long-running tasks keeps the main program
+     responsive to new events.
+   - Tasks are run concurrently instead of sequentially.
+
+- In console, type:
+
+```{.js code-line-numbers="13-15"}
 var webRready = await import(
   'https://webr.r-wasm.org/latest/webr.mjs'
 ).then(
@@ -301,6 +451,46 @@ webRready.version
 let result = await webRready.evalR(
   'set.seed(1); rnorm(10,5,1)'
 );
+```
+
+:::
+
+:::
+
+:::
+
+
+## Using R in our Browser: Convert
+
+:::{.r-fit-text}
+:::{.columns}
+
+:::{.column width="55%"}
+![](assets/gifs/demo-webr-console-05-convert-to-output.gif){alt="An animated gif that shows the calculation with webR being performed within Google Chrome's Developer Tools console." fig-align="center"}
+:::
+
+:::{.column width="45%"}
+
+- With the result being a pointer, we need to convert it to a JavaScript object to see the data.
+- In console, type:
+
+```{.js code-line-numbers="17-18"}
+var webRready = await import(
+  'https://webr.r-wasm.org/latest/webr.mjs'
+).then(
+  async ({ WebR }) => {
+    const webR = new WebR();
+    await webR.init();
+    return webR;
+  }
+);
+
+webRready.version
+
+let result = await webRready.evalR(
+  'set.seed(1); rnorm(10,5,1)'
+);
+
 let output = await result.toArray();
 output
 ```
@@ -323,19 +513,23 @@ Does it match with the webR output?
 
 ## WebAssembly and Python: Pyodide
 
+
 :::{.columns}
 
 :::{.column width="50%"}
 
+:::{.r-fit-text}
 - [Pyodide](https://pyodide.org/en/stable/) is a version of the Python interpreter built for WebAssembly.
   - Created by [Michael Droettboom](https://github.com/mdboom) and [Pyodide Contributors](https://zenodo.org/records/5156931)
 - Features a robust seamless Javascript ⟺ Python foreign function interface.
 - Allows for **Python** code to be directly run in a web browser, _without a Python server_.
+
+:::
 :::
 
 :::{.column width="50%"}
 
-![](assets/wasm-images/pyodide-logo.png){alt="The Pyodide Project logo"  fig-align="center"}
+![](assets/wasm-images/pyodide-logo.png){fig-alt="The Pyodide Project logo"  fig-align="center"}
 
 :::
 
@@ -459,7 +653,7 @@ There are more types of servers available; but, our discussion rests solely on t
 :::
 
 ::: {.callout-note}
-We can substitute the R with Python in these diagrams.
+We can substitute the R logo with Python's in these diagrams.
 :::
 
 
@@ -482,7 +676,8 @@ We can substitute the R with Python in these diagrams.
 
 - **Universal environments**
   - Everyone has the same environment.
-  - Not an exact replica of downloaded software.
+  - Not an exact replica of original software.
+  - No license fees.
   - Shinier computers perform better!
 
 ## How many _R_ packages are available? 
@@ -495,7 +690,7 @@ We can substitute the R with Python in these diagrams.
 
 [r-universe.dev](https://ropensci.org/blog/2023/11/17/runiverse-wasm/) offers binaries on commit:
 
-[![](assets/wasm-images/r-universe-wasm-webr-ggplot2.png){fig-alt="A screenshot showing the webR binary on the r-universe.dev website alongside of an application of webR to download data." fig-align="center"}](https://tidyverse.r-universe.dev/ggplot2)
+[![](assets/wasm-images/r-universe-wasm-webr-ggplot2.png){fig-alt="A screenshot showing the webR binary on the r-universe.dev website alongside of an application of webR to download data." fig-align="center" width="45%"}](https://tidyverse.r-universe.dev/ggplot2)
 
 ## Or, use a modified GitHub Action
 
@@ -553,10 +748,10 @@ Outside of the [Python packages built-in to Pyodide](https://pyodide.org/en/stab
 - For {quarto-webr}, we've seen a lot of adoption within the R community.
   - Many great [community examples](https://quarto-webr.thecoatlessprofessor.com/qwebr-community-examples.html) of the project's use.
 - For {quarto-pyodide}, the extension is relatively new (~Feb 2024)
-   - Prof. Kendra Burbank's [STAT 24320 course notes](https://kburbank.github.io/stat24320/) ([Source](https://github.com/KBurbank/stat24320))
    - Prof Louis Moresi's [EMSC program](https://anu-rses-education.github.io/EMSC-getting-going-with-python/book/Basics/Ex1-IntroWebPython.html) ([Source](https://github.com/ANU-RSES-Education/EMSC-getting-going-with-python))
-   - Rémi Genet's [Introduction to Python (French)](https://remigenet.github.io/Introduction-Python/) (
-     [Code adoption](https://github.com/remigenet/Introduction-Python/commit/4f01e38d69287682ebc52dacf125413354a5087e#diff-4bb7e59494d3ed710da3c018cbfeeb68127fb60fb6bda1c491ceaabc82cc40cc))
+   - Rémi Genet's [Introduction to Python (French)](https://remigenet.github.io/Introduction-Python/) ([Code adoption](https://github.com/remigenet/Introduction-Python/commit/4f01e38d69287682ebc52dacf125413354a5087e#diff-4bb7e59494d3ed710da3c018cbfeeb68127fb60fb6bda1c491ceaabc82cc40cc))
+   - Prof. Kendra Burbank's [STAT 24320 course notes](https://kburbank.github.io/stat24320/) ([Source](https://github.com/KBurbank/stat24320))
+
 
 ## Next steps
 
@@ -568,7 +763,7 @@ Outside of the [Python packages built-in to Pyodide](https://pyodide.org/en/stab
 
 If you are comfortable with VS Code, you can jump right into an authoring Codespace by clicking on the following button:
 
-[![](https://github.com/codespaces/badge.svg){fig-alt="Open in GitHub Codespaces" fig-align="center"}](https://codespaces.new/coatless-quarto/quarto-webr-pyodide-demo?quickstart=1)
+[![](https://github.com/codespaces/badge.svg){fig-alt="Open in GitHub Codespaces" fig-align="center" height="150px"}](https://codespaces.new/coatless-quarto/quarto-webr-pyodide-demo?quickstart=1)
 
 **Note:** Codespaces are available to Students and Teachers for free [up to 180 core hours per month](https://docs.github.com/en/education/manage-coursework-with-github-classroom/integrate-github-classroom-with-an-ide/using-github-codespaces-with-github-classroom#about-github-codespaces) through [GitHub Education](https://education.github.com/). Otherwise, you will have [up to 60 core hours and 15 GB free per month](https://github.com/features/codespaces#pricing).
 
@@ -1115,26 +1310,8 @@ From here, our Quarto augmented documents should be available for everyone!
 
 ![](assets/gifs/quarto-webr-demo-dynamic-input-control-widgets.gif){fig-alt="An animated GIF showing a demo of a control slider alongside of an interactive code cell. As the control slider is moved, the code cell is run and the output of a normal distribution histogram is shown."}
 
-## Slides and Code
-
-:::{.columns}
-
-:::{.column}
-![](assets/wasm-images/wasm-qr-repo.png){fig-alt="QR Code that holds the link to the presentation's GitHub repository."}
-:::
-
-:::{.column}
-These slides were made using [Quarto](https://quarto.org/)'s [Revealjs](https://quarto.org/docs/presentations/revealjs/) format under the [`{quarto-stanford}`](https://github.com/coatless-quarto/stanford) theme.
-
-See source of the presentation on [GitHub](https://github.com/coatless-talks/stats352-guest-lectures-on-dynamic-interactions-wasm)
-
-:::
-
-:::
-
-
 ## Thank you! Questions? 
 
 Thank you for the invitation to talk today! 
 
-Questions [{{< fa question size=2x >}}]{style="color:#80221c"}
+Questions [{{< fa question size=2x >}} {{< fa question size=2x >}} {{< fa question size=2x >}}]{style="color:#80221c"}
