@@ -2,7 +2,7 @@
 title: "Reproducible Research"
 subtitle: "with Quarto"
 author: "James Balamuta"
-date: now
+date: "May 1, 2024"
 format: 
   stanford-revealjs: 
     highlight-style: a11y

@@ -1,7 +1,7 @@
 ---
 title: "Dynamic Interactions for R and Python"
 subtitle: "using Quarto and WebAssembly"
-date: now
+date: "May 1, 2024"
 author:
   - name: James Balamuta
 format:

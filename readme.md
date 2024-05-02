@@ -22,7 +22,7 @@ These lectures delve into the world of dynamic interactions available through in
 
 If you are comfortable with VS Code, you can jump right into an Authoring Codespace for Dynamic Documents by clicking on the following button:
 
-[![](https://github.com/codespaces/badge.svg){fig-alt="Open in GitHub Codespaces"}](https://codespaces.new/coatless-quarto/quarto-webr-pyodide-demo?quickstart=1)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/coatless-quarto/quarto-webr-pyodide-demo?quickstart=1)
 
 **Note:** Codespaces are available to Students and Teachers for free [up to 180 core hours per month](https://docs.github.com/en/education/manage-coursework-with-github-classroom/integrate-github-classroom-with-an-ide/using-github-codespaces-with-github-classroom#about-github-codespaces) through [GitHub Education](https://education.github.com/). Otherwise, you will have [up to 60 core hours and 15 GB free per month](https://github.com/features/codespaces#pricing).
 
