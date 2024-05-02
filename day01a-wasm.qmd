@@ -378,7 +378,7 @@ webRready.version
 
 :::{.column width="50%"}
 
-![](assets/gifs/demo-webr-console-03-webr-evalr.gif){alt="An animated gif that shows the initialization of webR and some calculations within Google Chrome's Developer Tools console." fig-align="center"}
+![](assets/gifs/demo-webr-console-03-webr-evalr.gif){alt="An animated gif that shows an attempt at evaluating R code using webR within Google Chrome's Developer Tools console." fig-align="center"}
 
 :::
 
@@ -421,7 +421,7 @@ webRready.evalR(
 
 :::{.column width="50%"}
 
-![](assets/gifs/demo-webr-console-04-await-result.gif){alt="An animated gif that shows the calculation with webR being performed within Google Chrome's Developer Tools console." fig-align="center"}
+![](assets/gifs/demo-webr-console-04-await-result.gif){alt="An animated gif that shows a refined attempt at evaluating R code using webR with `await` (asynchronous programming) within Google Chrome's Developer Tools console." fig-align="center"}
 
 :::
 
@@ -466,7 +466,7 @@ let result = await webRready.evalR(
 :::{.columns}
 
 :::{.column width="55%"}
-![](assets/gifs/demo-webr-console-05-convert-to-output.gif){alt="An animated gif that shows the calculation with webR being performed within Google Chrome's Developer Tools console." fig-align="center"}
+![](assets/gifs/demo-webr-console-05-convert-to-output.gif){alt="An animated gif that shows the calculation with webR being performed and convert to a valid JavaScript object within Google Chrome's Developer Tools console." fig-align="center"}
 :::
 
 :::{.column width="45%"}
@@ -741,7 +741,7 @@ Outside of the [Python packages built-in to Pyodide](https://pyodide.org/en/stab
 
 ## How the quarto-{webr,pyodide} extension works
 
-![](assets/wasm-images/animated-quarto-webr-workflow-once.gif){fig-alt="An animated GIF showing how the `quarto-webr` extension works with Quarto, webR, and a static server." fig-align="center"}
+![](assets/gifs/animated-quarto-webr-workflow-once.gif){fig-alt="An animated GIF showing how the `quarto-webr` extension works with Quarto, webR, and a static server." fig-align="center"}
 
 ## Use cases
 
