@@ -33,3 +33,5 @@ website:
         contents:
           - text: "3. Create and Publish"
             href: day02a-webr.qmd
+          - text: "4. Currency"
+            href: day02b-currency.qmd

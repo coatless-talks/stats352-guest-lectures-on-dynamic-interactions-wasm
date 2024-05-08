@@ -1,0 +1,238 @@
+---
+title: "Exercise: Currency Live!"
+format: html
+engine: knitr
+webr: 
+  packages: [jsonlite]
+filters:
+  - webr
+  - pyodide
+---
+
+## Overview
+
+In this exercise, we'll explore creating a dynamic document that once published will continually update based on upstream data without needing to be re-run.
+
+We'll want to use a [public web API](https://github.com/public-api-lists/public-api-lists?tab=readme-ov-file) that does not require any API key and has both [HyperText Transfer Protocol Secure (HTTPS)](https://developer.mozilla.org/en-US/docs/Glossary/HTTPS) and [Cross-origin resource sharing (CORS)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) enabled. One such API is the [Frankfurter](https://www.frankfurter.app/docs/#historical) API that tracks foreign exchange references.
+
+Just as before, we'll focus on using the `quarto-webr` extension. However, you can substitute `quarto-webr` with `quarto-pyodide` if you prefer working with Python.
+
+## Step-by-step
+
+### Web API Background
+
+When working with web APIs, we have access to data by formatting a URL in a specific manner. 
+
+In this case, we can directly retrieve information related to a date range and a specific currency (e.g. `USD`) by using: 
+
+```sh
+https://www.frankfurter.app/2024-05-01..?to=USD
+```
+
+- `2024-05-01`: denotes the start date in the format of `Year-Month-Day`.
+- `..`: denotes a date range up to present day.
+- `?to=USD`: denotes a filter to only focus on conversion from the Euro to USD.
+- Optional:
+  - You can specify a closed date range using `2024-05-01..2024-05-03`
+  - You can omit `?to=` and receive all currencies. 
+
+### Downloading Data
+
+When using WebAssembly distributions of R and Python, we have to be careful when working with remote data. In the case of R, this means either using `download.file()` or `url()` inside of `readLines()` to obtain data. Inside of `pyodide`, there are similar limitations; but, there is built-in support for handling this data call (c.f. [`pyodide-http`](https://github.com/koenvo/pyodide-http)).
+
+::: {.panel-tabset group="programmingLanguage"}
+#### R
+For R's case, we have:
+
+```{webr-r}
+#| autorun: true
+#| read-only: true
+data_url = "https://www.frankfurter.app/2024-05-01..?to=USD"
+download.file(data_url, "currency-data.json")
+```
+
+This saves the file contents into `currency-data.json`, which sits on webR's virtual file system. The response data we have is governed by:
+
+```{webr-r}
+#| context: output
+cat(paste0(readLines("currency-data.json", warn=FALSE), collapse="\n"))
+```
+#### Python
+
+Inside of Python, we need to make a request to download the data using the `requests` library. 
+
+:::{.callout-note}
+The `quarto-pyodide` uses a special version of the `requests` library.
+:::
+
+```{pyodide-python}
+import requests
+
+# URL where JSON data is located
+data_url = "https://www.frankfurter.app/2024-05-01..?to=USD"
+
+# Fetch JSON data from the URL
+response = requests.get(data_url)
+data_dict = response.json()
+
+# Show data
+data_dict
+```
+::::
+
+## Data Wrangling
+
+From here, we need to data wrangle the JSON data. So, we'll likely want to include a code cell that loads the necessary JSON handling package and converts the JSON file into a data frame.
+
+::: {.panel-tabset group="programmingLanguage"}
+#### R
+
+The `jsonlite` package and 
+calls the `fromJSON()` function on the data. The result should be saved into `currency_json`.
+
+
+```{webr-r}
+#| read-only: true
+#| autorun: true
+library(jsonlite)
+currency_json <- fromJSON("currency-data.json")
+```
+
+
+We can further wrangle the data by using:
+
+```{webr-r}
+#| read-only: true
+#| autorun: true
+currency_df <- data.frame(
+  amount = currency_json$amount,
+  base = currency_json$base,
+  start_date = currency_json$start_date,
+  end_date = currency_json$end_date,
+  rates_date = as.Date(names(currency_json$rates)),
+  rate = unlist(lapply(currency_json$rates, function(x) x$USD))
+)
+
+currency_df
+```
+
+#### Python
+
+In Python, we only need to extract the `rates` key from the dictionary and use `pandas` construct the data frame containing rates and alongside a date. 
+
+:::{.callout-note}
+We do drop a few variables with this approach.
+:::
+
+```{pyodide-python}
+import pandas as pd 
+
+# Extract rates data
+rates_data = data_dict['rates']
+
+# Convert rates data into a DataFrame
+df = pd.DataFrame(rates_data).T.reset_index()
+df.columns = ['date', 'USD']
+
+# Convert 'date' column to datetime type
+df['date'] = pd.to_datetime(df['date'])
+
+# Show final data frame
+df
+```
+
+::: 
+
+Once done, the problem defaults to figure out the best way to visualize and model this kind of time series data. 
+
+### Tasks
+
+Create a Quarto document powered by either webR or Pyodide. The document should:
+
+1. Download data starting from January 1st, 2024 and run to present day for the USD to EURO.
+2. Create graphics to visualize the time series data.
+   - [R Graph Gallery](https://r-graph-gallery.com/)
+   - [Python Graph Gallery](https://python-graph-gallery.com/)
+   - [Graph Selector](https://www.data-to-viz.com/)
+3. (Optional) Try to model the time series data.
+
+Finally, publish the document on Quarto Pub.
+
+### Extra
+
+In the preceeding exercises, we only focused on `USD`. How can improve the analysis by allowing for all currencies rates to be present? e.g.
+
+```sh
+https://www.frankfurter.app/2024-05-01..
+```
+
+To help, here's some data wrangling code: 
+
+::: {.panel-tabset group="programmingLanguage"}
+#### R
+
+```{webr-r}
+data_url = "https://www.frankfurter.app/2024-05-01.."
+
+library(jsonlite)
+data_list <- fromJSON("currency-data-all.json")
+
+# Initialize an empty dataframe
+df <- data.frame()
+
+# Iterate over each date and its rates
+for (date in names(data_list$rates)) {
+  # Create a temporary dataframe for each date's rates
+  temp_df <- data.frame(
+    date = date,
+    currency = names(data_list$rates[[date]]),
+    rate = unlist(data_list$rates[[date]])
+  )
+  # Bind the temporary dataframe to the main dataframe
+  df <- rbind(df, temp_df)
+}
+
+# Add other columns
+df$amount <- data_list$amount
+df$base <- data_list$base
+df$start_date <- data_list$start_date
+df$end_date <- data_list$end_date
+
+# Print the dataframe
+print(df)
+```
+#### Python
+
+```{pyodide-python}
+import pandas as pd
+import json
+import requests
+
+# URL where JSON data is located
+# (Note, this URL may or may not cause issues!)
+data_url = "https://www.frankfurter.app/2024-05-01.."
+
+# Fetch JSON data from the URL
+response = requests.get(data_url)
+data_dict = response.json()
+
+# Extract rates data
+rates_data = data_dict['rates']
+
+# Initialize an empty list to store rows
+rows = []
+
+# Iterate through the rates data and extract each date and its corresponding rates
+for date, rates in rates_data.items():
+    for currency, rate in rates.items():
+        rows.append({'date': date, 'currency': currency, 'rate': rate})
+
+# Convert the list of dictionaries into a DataFrame
+df = pd.DataFrame(rows)
+
+# Convert 'date' column to datetime type
+df['date'] = pd.to_datetime(df['date'])
+
+df
+```
+:::
