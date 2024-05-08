@@ -30,3 +30,6 @@ website:
           - text: "2. Quarto"
             href: day01b-quarto.qmd
       - section: "May 8th"
+        contents:
+          - text: "3. Create and Publish"
+            href: day02a-webr.qmd

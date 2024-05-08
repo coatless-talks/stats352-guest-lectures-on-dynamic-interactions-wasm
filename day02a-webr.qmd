@@ -1,0 +1,142 @@
+---
+title: "Exercise: {quarto-webr} Website"
+format: html
+---
+
+## Overview
+
+In this exercise, we'll walkthrough creating a Quarto-based website and publishing it on [Quarto Pub](https://quartopub.com)!
+
+We'll focus on using the `quarto-webr` extension. However, you can substitute `quarto-webr` with `quarto-pyodide` if you prefer working with Python.
+   
+## Step-by-step
+
+1. Open RStudio on your computer.
+   - If you have yet to install [R](https://cran.r-project.org/) or [RStudio](https://posit.co/download/rstudio-desktop/), please do so now.
+
+2. Create a new project in RStudio
+   - In the upper right corner, select *Project: (None)*
+
+   ![](assets/rstudio-walkthrough/rstudio-quarto-project-01-create-new-rstudio-project.png){fig-alt="A screenshot showing how to create a new project by going to the upper right corner of RStudio."}
+   
+   - Click *New Directory*
+
+   ![](assets/rstudio-walkthrough/rstudio-quarto-project-02-create-in-new-directory.png){fig-alt="A screenshot showing the selection of 'New Directory' in the RStudio's New Project Wizard."}
+
+   - Click *Quarto Project*
+
+   ![](assets/rstudio-walkthrough/rstudio-quarto-project-03-create-quarto-project.png){fig-alt="A screenshot showing the selection of 'Quarto Project' under Project Type in the RStudio's New Project Wizard."}
+
+   - Fill in the *Directory Name* as `my-quarto-webr-project`: 
+     ![](assets/rstudio-walkthrough/rstudio-quarto-project-04-quarto-project-details.png){fig-alt="A screenshot showing how to create a new project by going to the upper right corner of RStudio."}
+     - Optional selections: 
+        - Consider selecting *Open in new session* to avoid losing your current RStudio session.
+        - If you are familiar with version control, select the *Create a .git repository* option to version the document.
+   - When completed, you should see a new RStudio window with the project name displayed in the upper right-hand corner.
+
+![](assets/rstudio-walkthrough/rstudio-quarto-project-05-refreshed-quarto-project.png){fig-alt="A screenshot showing a newly opened RStudio instance set to the `my-quarto-webr-project` location."}
+
+:::{.callout-important}
+If you are not in a new RStudio project, please let us know as the remaining steps assume this to be the case.
+:::
+
+:::{.callout-note}
+At any time, you can return to this project by going to the upper right corner of RStudio to change between projects.
+
+This has the advantage of not needing to worry about pathing between files.
+:::
+
+![](assets/rstudio-walkthrough/rstudio-quarto-project-06-close-and-revisit-project.png){fig-alt="A screenshot showing how to open and close an RStudio project by going to the upper right corner of RStudio."}
+
+3. Download and install the [{quarto-webr} Quarto extension](https://github.com/coatless/quarto-webr)
+
+:::{.callout-important}
+Quarto extensions are done on a per-project basis instead of globally. For each Quarto project, you must **install** the extension to use it.
+:::
+   
+   - Select the *Terminal* tab in RStudio's lower left corner.
+
+   - To install the Quarto extension, type in *Terminal*:
+
+```sh
+quarto add coatless/quarto-webr
+```
+
+![](assets/rstudio-walkthrough/rstudio-quarto-project-07-add-quarto-extension.png){fig-alt="A screenshot showing how to install the {quarto-webr} extension in RStudio's Terminal panel."}
+
+   - Answer *Yes* to the following prompts:
+     - *Do you trust the authors of this extension (Y/n)*
+     - *Would you like to continue (Y/n)*
+   - Answer *No* to the following prompt:
+     - *View documentation using default browser? (Y/n)*
+
+:::{.callout-note}
+You can view the `quarto-webr` documentation on:
+<https://quarto-webr.thecoatlessprofessor.com>
+:::
+
+   - In the *Files* panel on the lower right, there should be a new directory called  `_extensions`.
+
+![](assets/rstudio-walkthrough/rstudio-quarto-project-08-quarto-extension-installed.png){fig-alt="A screenshot showing that the {quarto-webr} extension is successfully installed since the `_extensions` folder is present."}
+
+:::{.callout-note}
+By default, Quarto installs extensions into the `_extensions` folder using the name or organization where the extension can be found followed by the name of the repository. In the case of the `quarto-webr` extension, this is `_extensions/coatless/quarto-webr`.
+:::
+
+4. Create a new Quarto document called: `my-quarto-webr-document.qmd`
+   - In RStudio, click *File* > *New File* > *Quarto Document*
+![](assets/rstudio-walkthrough/rstudio-quarto-project-09-create-quarto-document.png){fig-alt="A screenshot showing how to create a new Quarto document."}
+   - For the title, fill in: `My quarto-webr document`.
+   - For the author field, fill in your own name!
+   - Press *Create*
+![](assets/rstudio-walkthrough/rstudio-quarto-project-10-fill-in-title-and-press-create.png){fig-alt="A screenshot showing how to fill in the New Quarto Document wizard."}
+   - Optional:
+     - You may wish to select *Create empty document* instead of *Create* to avoid having filler content.
+   - Inside of the YAML header add the following:
+    ```yml
+    title: "My quarto-webr document"
+    format: html
+    engine: knitr
+    filters:
+    - webr
+    ```
+   - Next, add your first interactive R code cell using:
+    ````qmd
+    ```{{webr-r}}
+    # Your R code here
+    ```
+    ````
+   - Consider writing some additional prose you may want to describe what's happening in the code cell or adding more code cells.
+     - You may also want to explore some of the [Code Cell Options](https://quarto-webr.thecoatlessprofessor.com/qwebr-cell-options.html) or try to incorporate some of the [Feature Demos](https://quarto-webr.thecoatlessprofessor.com/demos/qwebr-feature-demos.html).
+
+   - Save the file by pressing the floppy drive or using **CNTRL + S** (Windows) or **CMD + S** (macOS).
+
+![](assets/rstudio-walkthrough/rstudio-quarto-project-11-save-file.png){fig-alt="A screenshot showing the Quarto document being saved."}
+
+
+6. Render the `my-quarto-webr-document.qmd` file by pressing the "Render" button.
+
+:::{.callout-note}
+If your document file does not render, please let us know!
+:::
+
+7. Create a Quarto Pub account [here](https://quartopub.com/).
+   - Quarto Pub is a document platform that allows you to securely create and publish Quarto documents to the web.
+   - You can view Quarto Pub as the successor to [RPubs](https://rpubs.com/).
+
+8. Upload the website to Quarto Pub
+   
+   ::: {.callout-note}
+   Documentation on publishing Quarto websites to Quarto Pub can be viewed [here](https://quarto.org/docs/publishing/quarto-pub.html).
+   :::
+   
+   - Publish the `my-quarto-webr-document.qmd` file on Quarto Pub by running in the *Terminal* tab of RStudio:
+    ```sh
+    quarto publish quarto-pub
+    ```
+:::{.callout-important}
+As you likely have never published to Quarto Pub before, the publish command will first prompt you to authenticate using the credentials setup in the prior step. After login in, you will be asked to confirm that you want to publish.
+:::
+![](assets/rstudio-walkthrough/rstudio-quarto-project-12-publish-quarto-pub.png){fig-alt="A screenshot showing how to publish the Quarto document onto Quarto Pub by using Terminal."}
+
+   - Once published, you should have a browser window open with the desired content.
