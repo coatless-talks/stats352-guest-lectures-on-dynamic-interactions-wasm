@@ -113,7 +113,7 @@ currency_df <- data.frame(
   rate = unlist(lapply(currency_json$rates, function(x) x$USD))
 )
 
-currency_df
+head(currency_df)
 ```
 
 #### Python
@@ -138,7 +138,7 @@ df.columns = ['date', 'USD']
 df['date'] = pd.to_datetime(df['date'])
 
 # Show final data frame
-df
+df.head()
 ```
 
 ::: 
@@ -200,7 +200,7 @@ df$start_date <- data_list$start_date
 df$end_date <- data_list$end_date
 
 # Print the dataframe
-print(df)
+head(df)
 ```
 #### Python
 
@@ -234,6 +234,6 @@ df = pd.DataFrame(rows)
 # Convert 'date' column to datetime type
 df['date'] = pd.to_datetime(df['date'])
 
-df
+df.head()
 ```
 :::
