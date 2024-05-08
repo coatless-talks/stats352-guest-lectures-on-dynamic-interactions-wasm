@@ -122,8 +122,8 @@ This can be accomplished by using find and replace. If using RStudio, this opera
 - By menu: 
   - Edit -> Find and Replace
 - Keyboard shortcut: 
-  - macOS: CMD + F
-  - Windows: Ctrl + F
+  - macOS: <kbd>Cmd</kbd> + <kbd>F</kbd>
+  - Windows: <kbd>Ctrl</kbd> + <kbd>F</kbd>
 
 ![](assets/conversion/rstudio-convert-code-cells.png){fig-alt="Find and replace open in RStudio"}
 
@@ -132,8 +132,8 @@ For VS Code, the same operation can be done using:
 - By menu: 
   - Edit -> Replace in Files
 - Keyboard shortcut: 
-  - macOS: Shift + Cmd + H
-  - Windows: Shift + Ctrl + H
+  - macOS: <kbd>Shift</kbd> + <kbd>Cmd</kbd> + <kbd>H</kbd>
+  - Windows: <kbd>Shift</kbd> + <kbd>Ctrl</kbd> + <kbd>H</kbd>
 
 ![](assets/conversion/vs-code-convert-code-cells.png){fig-alt="Find and replace open in VS Code"}
 
@@ -170,6 +170,10 @@ One common ask is to be able to have both interactive and pre-run version of the
 1 + 1
 ```
 :::
+
+### Remove unnecessary code cells
+
+The existing tutorial has a few additional code cells that call an R script that isn't available within the project. You can safely remove the setup cell and you can modify the final code cell to use `sessionInfo()` instead of their custom version.
 
 ### Render the document
 
