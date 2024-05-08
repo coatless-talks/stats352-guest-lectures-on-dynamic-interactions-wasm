@@ -1,0 +1,169 @@
+---
+title: "Exercise: Slides"
+format: html
+---
+
+## Overview
+
+In this exercise, we'll turn our attention to crafting interactive slides. 
+
+This exercise can be done using either `quarto-webr` or the `quarto-pyodide` extension. 
+
+## Step-by-step
+
+### Step into a Quarto Project
+
+Before continuing, please make sure to be inside a Quarto Project within RStudio or VS Code. 
+
+Refer back to our [first exercise](day02a-create-and-publish-rstudio.qmd) for help in creating a Quarto project or revisiting an existing Quarto project.
+
+### Install the Quarto Extension
+
+For new Quarto projects, please make sure to install the Quarto extension into the project by using:
+
+::: {.panel-tabset group="quarto-extension"}
+#### quarto-webr
+```sh
+quarto add coatless/quarto-webr
+```
+#### quarto-pyodide
+
+```sh
+quarto add coatless-quarto/pyodide
+```
+:::
+
+
+If you wish to also use the [stanford RevealJS theme](https://quarto.thecoatlessprofessor.com/stanford/demos/template-revealjs.html#/title-slide), please also install the [quarto-stanford](https://github.com/coatless-quarto/stanford) theme extension:
+
+```sh
+quarto add coatless-quarto/stanford
+```
+
+### Create a new Quarto Document
+
+Next, please create a new Quarto document.
+
+### Modify the document YAML
+
+For interactive slides, we must use the Quarto Revealjs format. Other formats for presentations will not work as they are not constructed with HTML.
+
+We can create a default Revealjs slide deck can be obtained by using:
+
+```yml
+---
+title: "Example RevealJS Slides"
+subtitle: "Let's Rock and Roll!"
+date: now
+author:
+  - name: FirstName LastName
+    email: person@stanford.edu
+format:
+  revealjs: default
+---
+```
+
+If you wish to use the stanford theme, please change the line under `format` to:
+
+```yml
+format:
+  stanford-revealjs: default
+```
+
+### Modify the document header
+
+Next, please modify the document header include the necessary filters
+
+::: {.panel-tabset group="quarto-extension"}
+#### quarto-webr
+
+```yaml
+---
+engine: knitr
+filters:
+  - webr
+---
+```
+
+#### quarto-pyodide
+
+```yaml
+---
+filters:
+  - pyodide
+---
+```
+:::
+
+### Removing the startup message
+
+Sometimes it may not be ideal to display a message on the title slide covering the status of webR or Pyodide. This can be disabled with  `show-startup-message: false` under the relevant
+
+::: {.panel-tabset group="quarto-extension"}
+#### quarto-webr
+
+```yaml
+---
+webr:
+  show-startup-message: false
+---
+```
+
+#### quarto-pyodide
+
+```yaml
+---
+pyodide:
+  show-startup-message: false
+---
+```
+:::
+
+
+### Create a new slide
+
+By default, Revealjs uses header markdown syntax to denote sections of the slide deck and slides themselves.
+
+A single `#` will create a new slide section while two `##` will generate a new slide. If you add three `###` or more, then the slide will start to have subheaders.
+
+```md
+# Section
+
+## My Slide Title
+
+Some slide contents
+```
+
+### Place an interactive code area
+
+Next, create a slide that has an interactive code area present.
+
+::: {.panel-tabset group="quarto-extension"}
+#### quarto-webr
+
+````md
+## My slide 
+
+Let's take a look at ... 
+
+```{{webr-r}}
+# R code here
+```
+````
+
+#### quarto-pyodide
+
+````md
+## My slide 
+
+Let's take a look at ... 
+
+```{{pyodide-python}}
+# Python code here
+```
+````
+:::
+
+### Render the document
+
+Finally, please render the slide deck.

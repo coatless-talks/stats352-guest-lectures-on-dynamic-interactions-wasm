@@ -35,7 +35,7 @@ website:
             href: day02a-create-and-publish-rstudio.qmd
           - text: "4. Convert"
             href: day02b-convert.qmd
-#          - text: "5. Slides"
-#            href: day02c-slides.qmd
-          - text: "5. Currency"
+          - text: "5. Slides"
+            href: day02c-slides.qmd
+          - text: "6. Currency"
             href: day02d-currency.qmd
