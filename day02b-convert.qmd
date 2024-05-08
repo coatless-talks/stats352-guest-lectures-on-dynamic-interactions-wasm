@@ -1,0 +1,176 @@
+---
+title: "Exercise: Conversion"
+format: html
+engine: knitr
+filters:
+  - webr
+  - pyodide
+---
+
+## Overview
+
+In this exercise, our focus turns to taking an existing static document and converting them over to use interactive Quarto cells.
+
+Just as before, we'll focus on using the `quarto-webr` extension. As the documents contain specific _R_ code and cell options, we do not advise trying to make a 1-to-1 substitution with `quarto-pyodide`; though, the conversion process remains the same.
+
+## Step-by-step
+
+### Overview
+
+For this exercise, we'll use the publicly available "Start" [tidymodels](https://www.tidymodels.org/start/) tutorial documents. You can see the tutorials here:
+
+- [Build a model](https://www.tidymodels.org/start/models) ([Source](
+https://github.com/tidymodels/tidymodels.org/blob/main/start/recipes/index.qmd))
+- [Preprocess your data with recipes](ttps://www.tidymodels.org/start/recipes) ([Source]((https://github.com/tidymodels/tidymodels.org/blob/main/start/recipes/index.qmd)))
+
+As an alternative, you can consider using existing lesson material from [Data Science Course in a Box](https://datasciencebox.org/) ([Source](https://github.com/tidyverse/datascience-box)) by [Mine Çetinkaya-Rundel](https://mine-cr.com/). 
+
+### Step into a Quarto Project
+
+Before continuing, please make sure to be inside a Quarto Project within RStudio or VS Code. 
+
+Refer back to our [first exercise](day02a-create-and-publish-rstudio.qmd) for help in creating a Quarto project or revisiting an existing Quarto project.
+
+### Install the Quarto Extension
+
+For new Quarto projects, please make sure to install the Quarto extension into the project by using:
+
+```sh
+quarto add coatless/quarto-webr
+```
+
+### Obtaining a copy of the file
+
+To begin, we need to obtain a copy of the local file. Inside of the R console, please type: 
+
+```{r}
+#| eval: false
+doc_url = "https://raw.githubusercontent.com/tidymodels/tidymodels.org/main/start/recipes/index.qmd"
+download.file(doc_url, "recipes.qmd")
+```
+
+This code chunk will download the source of the "Preprocess your data with recipes" tutorial page. 
+
+### Convert Chunk Options to Hashpipe Options
+
+:::{.callout-note}
+As the original recipes tutorial is written to take advantage of Quarto, this step is redundant and can be skipped.
+:::
+
+If converting from an RMarkdown document (.Rmd) into a Quarto Document (.qmd) for the first time, please make sure to automatically convert cell options using [`knitr`'s `convert_chunk_header()`](https://search.r-project.org/CRAN/refmans/knitr/html/convert_chunk_header.html) function. 
+
+```{r}
+#| eval: false
+knitr::convert_chunk_header(
+  "recipes.Rmd", output = "recipes.qmd",
+  type = "yaml"
+)
+```
+
+
+This step converts RMarkdown style-chunk options to Quarto's hashpipe style specification, e.g. 
+
+````
+```{{r, echo = FALSE, fig.width: 10}}
+```
+````
+
+switches to: 
+
+```{{r}}
+#| echo: false
+#| fig.width: 10
+```
+
+### Modify the document header
+
+Next, please modify the document header to include `engine: knitr` and the `filters` statement.
+
+```yaml
+---
+title: "Preprocess your data with recipes"
+description: | 
+  Prepare data for modeling with modular preprocessing steps.
+engine: knitr
+filters:
+  - webr
+---
+```
+
+### Setup R Packages Required
+
+For the next step, identify what R packages are required by the tutorial.
+
+We recommend placing all R packages under the [document-level option `packages`](https://quarto-webr.thecoatlessprofessor.com/qwebr-meta-options.html#packages). By using the `packages` key, the document's interactive cells will not unlock until all packages are downloaded and installed. Please make sure to remove individual `install.packages()` statements in existing cells.
+
+Moreover, the extension will load all R packages specified in this manner before unlocking interactive code cells. You may wish to disable this option by supplying: `autoload-packages: false`.
+
+### Set Global Cell Options
+
+One other useful feature is to specify any option you find yourself repeating consistently under the
+[document-level option `cell-options`](https://quarto-webr.thecoatlessprofessor.com/qwebr-meta-options.html#cell-options).
+
+For this case, we would recommend setting `autorun: true` to run by default.
+
+
+### Convert Cells
+
+For the next step, please convert cells by switching the designation from `{r}` to `{webr-r}`. 
+
+This can be accomplished by using find and replace. If using RStudio, this operation can be performed by either: 
+
+- By menu: 
+  - Edit -> Find and Replace
+- Keyboard shortcut: 
+  - macOS: CMD + F
+  - Windows: Ctrl + F
+
+![](assets/conversion/rstudio-convert-code-cells.png){fig-alt="Find and replace open in RStudio"}
+
+For VS Code, the same operation can be done using:
+
+- By menu: 
+  - Edit -> Replace in Files
+- Keyboard shortcut: 
+  - macOS: Shift + Cmd + H
+  - Windows: Shift + Ctrl + H
+
+![](assets/conversion/vs-code-convert-code-cells.png){fig-alt="Find and replace open in VS Code"}
+
+#### Aside
+
+One common ask is to be able to have both interactive and pre-run version of the exercise material available side-by-side. We can accomplish this by using [panel tabsets](https://quarto.org/docs/output-formats/html-basics.html#tabsets) with **Tabset Groups** to automatically toggle between versions on the page. For example, the following creates a tabset that includes a `{webr-r}` version and an `{r}` code cell version.
+
+````md
+::: {.panel-tabset group="programming-demo"}
+#### Interactive Code
+
+```{{webr-r}}
+#| autorun: true
+1 + 1
+```
+#### Pre-run code
+
+```{{r}}
+1 + 1
+```
+:::
+````
+
+::: {.panel-tabset group="programming-demo"}
+#### Interactive Code
+
+```{webr-r}
+#| autorun: true
+1 + 1
+```
+#### Pre-run code
+
+```{r}
+1 + 1
+```
+:::
+
+### Render the document
+
+Once done, please render the document. 

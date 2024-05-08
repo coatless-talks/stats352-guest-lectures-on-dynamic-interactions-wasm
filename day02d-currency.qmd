@@ -173,6 +173,7 @@ To help, here's some data wrangling code:
 
 ```{webr-r}
 data_url = "https://www.frankfurter.app/2024-05-01.."
+download.file(data_url, "currency-data-all.json")
 
 library(jsonlite)
 data_list <- fromJSON("currency-data-all.json")

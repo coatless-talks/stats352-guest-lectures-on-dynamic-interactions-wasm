@@ -32,6 +32,10 @@ website:
       - section: "May 8th"
         contents:
           - text: "3. Create and Publish"
-            href: day02a-webr.qmd
-          - text: "4. Currency"
-            href: day02b-currency.qmd
+            href: day02a-create-and-publish-rstudio.qmd
+          - text: "4. Convert"
+            href: day02b-convert.qmd
+#          - text: "5. Slides"
+#            href: day02c-slides.qmd
+          - text: "5. Currency"
+            href: day02d-currency.qmd
