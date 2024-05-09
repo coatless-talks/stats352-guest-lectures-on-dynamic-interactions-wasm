@@ -1,25 +1,23 @@
 ---
 title: "Exercise: Slides"
-format: html
+format: 
+  html:
+    toc: true
 ---
 
 ## Overview
 
-In this exercise, we'll turn our attention to crafting interactive slides. 
-
-This exercise can be done using either `quarto-webr` or the `quarto-pyodide` extension. 
+In this exercise, we'll focus on creating interactive slides using Quarto. You can use either the quarto-webr or quarto-pyodide extension for this.
 
 ## Step-by-step
 
 ### Step into a Quarto Project
 
-Before continuing, please make sure to be inside a Quarto Project within RStudio or VS Code. 
-
-Refer back to our [first exercise](day02a-create-and-publish-rstudio.qmd) for help in creating a Quarto project or revisiting an existing Quarto project.
+Ensure you're working within a Quarto Project in RStudio or VS Code. If you need help setting up a Quarto project or re-entering the existing Quarto project, please refer back to our [first exercise](day02a-create-and-publish-rstudio.qmd) or raise your hand.
 
 ### Install the Quarto Extension
 
-For new Quarto projects, please make sure to install the Quarto extension into the project by using:
+For new Quarto projects, please make sure to install the Quarto extension into the project by typing into the *Terminal* tab:
 
 ::: {.panel-tabset group="quarto-extension"}
 #### quarto-webr
@@ -42,13 +40,14 @@ quarto add coatless-quarto/stanford
 
 ### Create a new Quarto Document
 
-Next, please create a new Quarto document.
+Next, please create a new Quarto document. 
 
 ### Modify the document YAML
 
-For interactive slides, we must use the Quarto Revealjs format. Other formats for presentations will not work as they are not constructed with HTML.
+To have interactive slides, we must use the Quarto Revealjs format. Other presentation formats will not work as they are not constructed with HTML.
 
-We can create a default Revealjs slide deck can be obtained by using:
+
+Here's the default document header YAML that you need to use:
 
 ```yml
 ---
@@ -63,7 +62,7 @@ format:
 ---
 ```
 
-If you wish to use the stanford theme, please change the line under `format` to:
+If you wish to use the Stanford theme, please change the line under `format` to:
 
 ```yml
 format:

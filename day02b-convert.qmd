@@ -1,6 +1,8 @@
 ---
 title: "Exercise: Conversion"
-format: html
+format: 
+  html:
+    toc: true
 engine: knitr
 filters:
   - webr
@@ -9,7 +11,7 @@ filters:
 
 ## Overview
 
-In this exercise, our focus turns to taking an existing static document and converting them over to use interactive Quarto cells.
+In this exercise, we'll learn how to transform an existing static RMarkdown or Quarto document into an interactive one. We'll walk through the process step by step, starting with obtaining the tutorial documents and ending with rendering the interactive version.
 
 Just as before, we'll focus on using the `quarto-webr` extension. As the documents contain specific _R_ code and cell options, we do not advise trying to make a 1-to-1 substitution with `quarto-pyodide`; though, the conversion process remains the same.
 
@@ -21,19 +23,17 @@ For this exercise, we'll use the publicly available "Start" [tidymodels](https:/
 
 - [Build a model](https://www.tidymodels.org/start/models) ([Source](
 https://github.com/tidymodels/tidymodels.org/blob/main/start/recipes/index.qmd))
-- [Preprocess your data with recipes](ttps://www.tidymodels.org/start/recipes) ([Source]((https://github.com/tidymodels/tidymodels.org/blob/main/start/recipes/index.qmd)))
+- [Preprocess your data with recipes](https://www.tidymodels.org/start/recipes) ([Source]((https://github.com/tidymodels/tidymodels.org/blob/main/start/recipes/index.qmd)))
 
 As an alternative, you can consider using existing lesson material from [Data Science Course in a Box](https://datasciencebox.org/) ([Source](https://github.com/tidyverse/datascience-box)) by [Mine Çetinkaya-Rundel](https://mine-cr.com/). 
 
 ### Step into a Quarto Project
 
-Before continuing, please make sure to be inside a Quarto Project within RStudio or VS Code. 
-
-Refer back to our [first exercise](day02a-create-and-publish-rstudio.qmd) for help in creating a Quarto project or revisiting an existing Quarto project.
+First, ensure you're inside a Quarto Project within RStudio or VS Code. If you need help with this, refer back to our [first exercise](day02a-create-and-publish-rstudio.qmd) for help in creating a Quarto project or revisiting an existing Quarto project. Alternatively, please feel free to raise your hand.
 
 ### Install the Quarto Extension
 
-For new Quarto projects, please make sure to install the Quarto extension into the project by using:
+For new Quarto projects, please make sure to install the Quarto extension into the project by typing into *Terminal*:
 
 ```sh
 quarto add coatless/quarto-webr
@@ -41,7 +41,7 @@ quarto add coatless/quarto-webr
 
 ### Obtaining a copy of the file
 
-To begin, we need to obtain a copy of the local file. Inside of the R console, please type: 
+To begin, download a copy of the tutorial file locally. Inside the R console, run:
 
 ```{r}
 #| eval: false
@@ -57,7 +57,7 @@ This code chunk will download the source of the "Preprocess your data with recip
 As the original recipes tutorial is written to take advantage of Quarto, this step is redundant and can be skipped.
 :::
 
-If converting from an RMarkdown document (.Rmd) into a Quarto Document (.qmd) for the first time, please make sure to automatically convert cell options using [`knitr`'s `convert_chunk_header()`](https://search.r-project.org/CRAN/refmans/knitr/html/convert_chunk_header.html) function. 
+When converting from an RMarkdown document (.Rmd) to a Quarto Document (.qmd) for the first time, use [`knitr`'s `convert_chunk_header()`](https://search.r-project.org/CRAN/refmans/knitr/html/convert_chunk_header.html) function:
 
 ```{r}
 #| eval: false
@@ -110,14 +110,14 @@ Moreover, the extension will load all R packages specified in this manner before
 One other useful feature is to specify any option you find yourself repeating consistently under the
 [document-level option `cell-options`](https://quarto-webr.thecoatlessprofessor.com/qwebr-meta-options.html#cell-options).
 
-For this case, we would recommend setting `autorun: true` to run by default.
+For this case, we would recommend setting `autorun: true` to run cells by default.
 
 
 ### Convert Cells
 
-For the next step, please convert cells by switching the designation from `{r}` to `{webr-r}`. 
+Please convert cells by switching the designation from `{r}` to `{webr-r}`. This can be accomplished by using find and replace. 
 
-This can be accomplished by using find and replace. If using RStudio, this operation can be performed by either: 
+If using RStudio, this operation can be performed by either: 
 
 - By menu: 
   - Edit -> Find and Replace
@@ -139,7 +139,10 @@ For VS Code, the same operation can be done using:
 
 #### Aside
 
-One common ask is to be able to have both interactive and pre-run version of the exercise material available side-by-side. We can accomplish this by using [panel tabsets](https://quarto.org/docs/output-formats/html-basics.html#tabsets) with **Tabset Groups** to automatically toggle between versions on the page. For example, the following creates a tabset that includes a `{webr-r}` version and an `{r}` code cell version.
+You can display both interactive and pre-run versions side-by-side using [panel tabsets](https://quarto.org/docs/output-formats/html-basics.html#tabsets) with **Tabset Groups** to automatically toggle between versions on the page.
+
+
+One common ask is to be able to have both interactive and pre-run version of the exercise material available side-by-side. We can accomplish this by using [panel tabsets](https://quarto.org/docs/output-formats/html-basics.html#tabsets) with  For example, the following creates a tabset that includes a `{webr-r}` version and an `{r}` code cell version.
 
 ````md
 ::: {.panel-tabset group="programming-demo"}
@@ -177,4 +180,4 @@ The existing tutorial has a few additional code cells that call an R script that
 
 ### Render the document
 
-Once done, please render the document. 
+Finally, render the document to view the interactive version.

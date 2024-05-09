@@ -1,6 +1,8 @@
 ---
 title: "Exercise: Currency Live!"
-format: html
+format: 
+  html:
+    toc: true
 engine: knitr
 webr: 
   packages: [jsonlite]
@@ -87,8 +89,7 @@ From here, we need to data wrangle the JSON data. So, we'll likely want to inclu
 ::: {.panel-tabset group="programmingLanguage"}
 #### R
 
-The `jsonlite` package and 
-calls the `fromJSON()` function on the data. The result should be saved into `currency_json`.
+For R, the `jsonlite` package handles the conversion from JSON into an R list through `fromJSON()` function. The result should be saved into `currency_json`.
 
 
 ```{webr-r}
@@ -160,7 +161,7 @@ Finally, publish the document on Quarto Pub.
 
 ### Extra
 
-In the preceeding exercises, we only focused on `USD`. How can improve the analysis by allowing for all currencies rates to be present? e.g.
+In the preceeding exercises, we only focused on working with the **EURO** to **USD** conversion rate. How can we improve the analysis (graphics / ) by allowing for all currencies rates to be present? e.g.
 
 ```sh
 https://www.frankfurter.app/2024-05-01..

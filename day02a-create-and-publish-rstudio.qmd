@@ -1,6 +1,8 @@
 ---
 title: "Exercise: Create and Publish"
-format: html
+format: 
+  html:
+    toc: true
 ---
 
 ## Overview
