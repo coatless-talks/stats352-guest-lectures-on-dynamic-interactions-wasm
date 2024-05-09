@@ -16,13 +16,16 @@ These lectures delve into the world of dynamic interactions available through in
   - [Dynamic Interactions for R and Python](https://talks.thecoatlessprofessor.com/stats352-guest-lectures-on-dynamic-interactions-wasm/day01a-wasm.html#/title-slide)
   - [Reproducible Research with Quarto](https://talks.thecoatlessprofessor.com/stats352-guest-lectures-on-dynamic-interactions-wasm/day01b-quarto.html#/title-slide) (Quarto Intro)
 - May 8th
-  - In-class coding
+  - [Exercise 1: Create and Publish](https://talks.thecoatlessprofessor.com/stats352-guest-lectures-on-dynamic-interactions-wasm/day02a-create-and-publish-rstudio.html)
+  - [Exercise 2: Convert Existing Documents](https://talks.thecoatlessprofessor.com/stats352-guest-lectures-on-dynamic-interactions-wasm/day02b-convert.html)
+  - [Exercise 3: Slide Decks](https://talks.thecoatlessprofessor.com/stats352-guest-lectures-on-dynamic-interactions-wasm/day02c-slides.html)
+  - [Exercise 4: Dynamic Currency](https://talks.thecoatlessprofessor.com/stats352-guest-lectures-on-dynamic-interactions-wasm/day02d-currency.html)
 
 ### Authoring Codespace
 
 If you are comfortable with VS Code, you can jump right into an Authoring Codespace for Dynamic Documents by clicking on the following button:
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/coatless-quarto/quarto-webr-pyodide-demo?quickstart=1)
+[![](https://github.com/codespaces/badge.svg){fig-alt="Open in GitHub Codespaces" fig-align="center" height="150px"}](https://codespaces.new/coatless-quarto/quarto-webr-pyodide-demo?devcontainer_path=.devcontainer%2Fvs-code%2Fdevcontainer.json)
 
 **Note:** Codespaces are available to Students and Teachers for free [up to 180 core hours per month](https://docs.github.com/en/education/manage-coursework-with-github-classroom/integrate-github-classroom-with-an-ide/using-github-codespaces-with-github-classroom#about-github-codespaces) through [GitHub Education](https://education.github.com/). Otherwise, you will have [up to 60 core hours and 15 GB free per month](https://github.com/features/codespaces#pricing).
 
