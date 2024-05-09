@@ -264,7 +264,7 @@ This brings in the need to use `llvm-flang`. For more, see George Stagg's [Fortr
 🔗 <https://webr.r-wasm.org/v0.3.3/>
 
 ```{=html}
-<iframe allow="cross-origin-isolated" width="100%" height="80%" src="https://webr.r-wasm.org/v0.3.3/">
+<iframe allow="cross-origin-isolated" style="display:block; margin: 0 auto;" width="90%" height="75%" src="https://webr.r-wasm.org/v0.3.3/">
 </iframe>
 ```
 
@@ -513,7 +513,6 @@ Does it match with the webR output?
 
 ## WebAssembly and Python: Pyodide
 
-
 :::{.columns}
 
 :::{.column width="50%"}
@@ -540,7 +539,7 @@ Does it match with the webR output?
 🔗 <https://pyodide.org/en/stable/console.html>
 
 ```{=html}
-<iframe allow="cross-origin-isolated" width="100%" height="80%" src="https://pyodide.org/en/stable/console.html">
+<iframe allow="cross-origin-isolated" style="display:block; margin: 0 auto;" width="90%" height="75%" src="https://pyodide.org/en/stable/console.html">
 </iframe>
 ```
 
@@ -549,7 +548,7 @@ Does it match with the webR output?
 🔗 [JupyterLite's JupyterLab Version](https://jupyterlite.readthedocs.io/en/stable/_static/lab/index.html)
 
 ```{=html}
-<iframe allow="cross-origin-isolated" width="100%" height="80%" src="https://jupyterlite.readthedocs.io/en/stable/_static/lab/index.html">
+<iframe allow="cross-origin-isolated" width="90%" height="75%" src="https://jupyterlite.readthedocs.io/en/stable/_static/lab/index.html">
 </iframe>
 ```
 
@@ -559,7 +558,7 @@ Does it match with the webR output?
 🔗 [JupyterLite's JupyterNotebook Version](https://jupyterlite.readthedocs.io/en/stable/_static/notebooks/index.html?path=intro.ipynb)
 
 ```{=html}
-<iframe allow="cross-origin-isolated" width="100%" height="80%" src="https://jupyterlite.readthedocs.io/en/stable/_static/notebooks/index.html?path=intro.ipynb">
+<iframe allow="cross-origin-isolated" style="display:block; margin: 0 auto;"  width="90%" height="80%" src="https://jupyterlite.readthedocs.io/en/stable/_static/notebooks/index.html?path=intro.ipynb">
 </iframe>
 ```
 
@@ -570,7 +569,7 @@ Does it match with the webR output?
 🔗 [JupyterLite's REPL](https://jupyterlite.readthedocs.io/en/stable/_static/repl/index.html?toolbar=1&kernel=python&code=import%20this)
 
 ```{=html}
-<iframe allow="cross-origin-isolated" width="100%" height="80%" src="https://jupyterlite.readthedocs.io/en/stable/_static/repl/index.html?toolbar=1&kernel=python&code=import%20this">
+<iframe allow="cross-origin-isolated" style="display:block; margin: 0 auto;"  width="90%" height="80%" src="https://jupyterlite.readthedocs.io/en/stable/_static/repl/index.html?toolbar=1&kernel=python&code=import%20this">
 </iframe>
 ```
 
@@ -579,7 +578,7 @@ Does it match with the webR output?
 🔗 <https://marimo.app/>
 
 ```{=html}
-<iframe allow="cross-origin-isolated" width="100%" height="80%" src="https://marimo.app/">
+<iframe allow="cross-origin-isolated" style="display:block; margin: 0 auto;" width="90%" height="80%" src="https://marimo.app/">
 </iframe>
 ```
 
@@ -672,6 +671,17 @@ We can substitute the R logo with Python's in these diagrams.
 
 ![](assets/wasm-images/privacy-is-no-more.png){fig-alt="An static image showing the source of a hidden solution on a page." fig-align="center""}
 
+## Trade-offs: Complexity
+
+- New layer of complexity to documents.
+  - Compute happens when the document opens.
+  - Not during the authoring stage.
+- Uses standard code cell markdown
+  - Switch `{r}` -> `{webr-r}`.
+- Setup using document header fields.
+  - No JavaScript manipulation required.  
+
+
 ## Trade-offs: Environment
 
 - **Universal environments**
@@ -763,7 +773,7 @@ Outside of the [Python packages built-in to Pyodide](https://pyodide.org/en/stab
 
 If you are comfortable with VS Code, you can jump right into an authoring Codespace by clicking on the following button:
 
-[![](https://github.com/codespaces/badge.svg){fig-alt="Open in GitHub Codespaces" fig-align="center" height="150px"}](https://codespaces.new/coatless-quarto/quarto-webr-pyodide-demo?quickstart=1)
+[![](https://github.com/codespaces/badge.svg){fig-alt="Open in GitHub Codespaces" fig-align="center" height="150px"}](https://codespaces.new/coatless-quarto/quarto-webr-pyodide-demo?devcontainer_path=.devcontainer%2Fvs-code%2Fdevcontainer.json)
 
 **Note:** Codespaces are available to Students and Teachers for free [up to 180 core hours per month](https://docs.github.com/en/education/manage-coursework-with-github-classroom/integrate-github-classroom-with-an-ide/using-github-codespaces-with-github-classroom#about-github-codespaces) through [GitHub Education](https://education.github.com/). Otherwise, you will have [up to 60 core hours and 15 GB free per month](https://github.com/features/codespaces#pricing).
 
@@ -1300,7 +1310,7 @@ From here, our Quarto augmented documents should be available for everyone!
 ## Future Work 
 
 - Improve the `quarto-pyodide` extension features.
-  - Move toward a message messaging interface.
+  - Move toward a message posting interface.
   - Improve graphing support
 - Formalize a built-in code exercise checking feature. 
 - Push toward native code APIs.
