@@ -122,23 +122,46 @@ By default, Quarto installs extensions into the `_extensions` folder using the n
 If your document file does not render, please let us know!
 :::
 
-7. Create a Quarto Pub account [here](https://quartopub.com/).
+7. Delete the placeholder document.
+   - In the *Files* panel on the lower right, find the `my-quarto-webr-project.qmd`
+   - Press the checkbox to the left of the file to select it.
+   - In the *Files* panel menu bar, press the *Delete* button.
+
+   ![](assets/rstudio-walkthrough/rstudio-quarto-project-12-delete-old-file.png){fig-alt="A screenshot showing the placeholder Quarto document being deleted using RStudio's Files panel."}
+
+
+   - Press *Yes* on the pop up to confirm deletion of the file.
+
+   ![](assets/rstudio-walkthrough/rstudio-quarto-project-13-delete-old-file-confirmation-prompt.png){fig-alt="A screenshot showing a confirmation popup to delete the placeholder Quarto document in RStudio."}
+
+8. Modify the `_quarto.yml` file. 
+   - In the *Files* panel on the lower right, find the `_quarto.yml` and double click on it.
+   - Change the title field to: `title: "my-quarto-webr-document"`
+   - Add underneath `title` the following entry: `type: website`
+     - Make sure to indent the line by 2 spaces to match the prior entry.
+
+   ![](assets/rstudio-walkthrough/rstudio-quarto-project-14-modify-quarto-yaml.png){fig-alt="A screenshot showing the modifications to the `_quarto.yml` file."}
+
+9. Create a Quarto Pub account [here](https://quartopub.com/).
    - Quarto Pub is a document platform that allows you to securely create and publish Quarto documents to the web.
    - You can view Quarto Pub as the successor to [RPubs](https://rpubs.com/).
 
-8. Upload the website to Quarto Pub
-   
-   ::: {.callout-note}
-   Documentation on publishing Quarto websites to Quarto Pub can be viewed [here](https://quarto.org/docs/publishing/quarto-pub.html).
-   :::
-   
+10. Upload the website to Quarto Pub
+
+::: {.callout-note}
+Documentation on publishing Quarto websites to Quarto Pub can be viewed [here](https://quarto.org/docs/publishing/quarto-pub.html).
+:::
+
    - Publish the `my-quarto-webr-document.qmd` file on Quarto Pub by running in the *Terminal* tab of RStudio:
-    ```sh
-    quarto publish quarto-pub
-    ```
+
+   ```sh
+   quarto publish quarto-pub
+   ```
+   
 :::{.callout-important}
 As you likely have never published to Quarto Pub before, the publish command will first prompt you to authenticate using the credentials setup in the prior step. After login in, you will be asked to confirm that you want to publish.
 :::
-![](assets/rstudio-walkthrough/rstudio-quarto-project-12-publish-quarto-pub.png){fig-alt="A screenshot showing how to publish the Quarto document onto Quarto Pub by using Terminal."}
+
+   ![](assets/rstudio-walkthrough/rstudio-quarto-project-15-publish-quarto-pub.png){fig-alt="A screenshot showing how to publish the Quarto document onto Quarto Pub by using Terminal."}
 
    - Once published, you should have a browser window open with the desired content.

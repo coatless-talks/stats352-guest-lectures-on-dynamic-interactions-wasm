@@ -96,7 +96,7 @@ filters:
 
 ### Removing the startup message
 
-Sometimes it may not be ideal to display a message on the title slide covering the status of webR or Pyodide. This can be disabled with  `show-startup-message: false` under the relevant
+Sometimes it may not be ideal to display a message on the title slide covering the status of webR or Pyodide. This can be disabled with  `show-startup-message: false` under the relevant document key.
 
 ::: {.panel-tabset group="quarto-extension"}
 #### quarto-webr
@@ -131,6 +131,10 @@ A single `#` will create a new slide section while two `##` will generate a new 
 ## My Slide Title
 
 Some slide contents
+
+### Subsection
+
+Some more details...
 ```
 
 ### Place an interactive code area
