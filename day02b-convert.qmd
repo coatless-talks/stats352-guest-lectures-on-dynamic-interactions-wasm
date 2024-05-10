@@ -139,10 +139,7 @@ For VS Code, the same operation can be done using:
 
 #### Aside
 
-You can display both interactive and pre-run versions side-by-side using [panel tabsets](https://quarto.org/docs/output-formats/html-basics.html#tabsets) with **Tabset Groups** to automatically toggle between versions on the page.
-
-
-One common ask is to be able to have both interactive and pre-run version of the exercise material available side-by-side. We can accomplish this by using [panel tabsets](https://quarto.org/docs/output-formats/html-basics.html#tabsets) with  For example, the following creates a tabset that includes a `{webr-r}` version and an `{r}` code cell version.
+You can display both interactive and pre-run versions side-by-side using [panel tabsets](https://quarto.org/docs/output-formats/html-basics.html#tabsets) with **Tabset Groups** to automatically toggle between versions on the page. For example, the following creates a tabset that includes a `{webr-r}` version and an `{r}` code cell version.
 
 ````md
 ::: {.panel-tabset group="programming-demo"}
