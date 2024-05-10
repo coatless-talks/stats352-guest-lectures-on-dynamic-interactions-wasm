@@ -1,6 +1,6 @@
 ---
 title: "Dynamic Interactions for R and Python"
-subtitle: "using Quarto and WebAssembly"
+subtitle: "Using Quarto and WebAssembly"
 date: "May 1, 2024"
 author:
   - name: James Balamuta
@@ -44,8 +44,8 @@ Additional options:
 :::{.column}
 These slides were made using [Quarto](https://quarto.org/)'s [Revealjs](https://quarto.org/docs/presentations/revealjs/) format under the [`{quarto-stanford}`](https://github.com/coatless-quarto/stanford) theme.
 
-See source of the presentation on [GitHub](https://github.com/coatless-talks/stats352-guest-lectures-on-dynamic-interactions-wasm)
-
+See source of the presentation on GitHub at: <
+https://github.com/coatless-talks/stats352-guest-lectures-on-dynamic-interactions-wasm>
 :::
 
 :::
@@ -56,7 +56,7 @@ See source of the presentation on [GitHub](https://github.com/coatless-talks/sta
 :::{.incremental}
 1. Understand the concept of Web Assembly (WASM) and its role in bringing data science languages to the web.
 2. Explore the use of WASM in conjunction with Pyodide for Python and webR for R to empower dynamic and reproducible interactions within Quarto documents.
-3. Engage in hands-on exercises and demonstrations to reinforce understanding and proficiency in leveraging Pyodide and webR for R within Quarto documents for dynamic content creation.
+3. Engage in hands-on exercises and demonstrations to reinforce understanding and proficiency in leveraging Pyodide and webR within Quarto documents for dynamic content creation.
 :::
 
 ## Before we begin, thank you ...
@@ -502,6 +502,8 @@ output
 
 ## What are the values in R? 
 
+{{< countdown "01:30" top="10px" right="5px">}}
+
 Open up your copy of R, what values are generated when running:
 
 ```r
@@ -677,7 +679,7 @@ We can substitute the R logo with Python's in these diagrams.
   - Compute happens when the document opens.
   - Not during the authoring stage.
 - Uses standard code cell markdown
-  - Switch `{r}` -> `{webr-r}`.
+  - Switch `{r}` -> `{webr-r}` or `{python}` -> `{pyodide-python}`.
 - Setup using document header fields.
   - No JavaScript manipulation required.  
 
@@ -696,15 +698,15 @@ We can substitute the R logo with Python's in these diagrams.
 
 ![](assets/wasm-images/repo-r-wasm.png){fig-alt="A screenshot showing the webR project's binary WASM R package repository." fig-align="center"}
 
-## Daily _R_ packages
+## Latest _R_ packages from GitHub
 
-[r-universe.dev](https://ropensci.org/blog/2023/11/17/runiverse-wasm/) offers binaries on commit:
+[r-universe.dev](https://ropensci.org/blog/2023/11/17/runiverse-wasm/) offers binaries based on an R package repository's most recent commit:
 
-[![](assets/wasm-images/r-universe-wasm-webr-ggplot2.png){fig-alt="A screenshot showing the webR binary on the r-universe.dev website alongside of an application of webR to download data." fig-align="center" width="45%"}](https://tidyverse.r-universe.dev/ggplot2)
+[![](assets/wasm-images/r-universe-wasm-webr-ggplot2.png){fig-alt="A screenshot showing the webR binary on the r-universe.dev website alongside of an application of webR to download data." fig-align="center" style="width:55%;"}](https://tidyverse.r-universe.dev/ggplot2)
 
 ## Or, use a modified GitHub Action
 
-- Not able to sync with <https://r-universe.dev>?
+- Not able to use <https://r-universe.dev>?
 - No worries! The compilation can be done locally or in a GitHub Action. 
   - [rwasm: Compiling R packages](https://r-wasm.github.io/rwasm/articles/rwasm.html#compiling-r-packages-for-webassembly)
   - [Unified GH Workflow with `{pkgdown}`](https://github.com/coatless-tutorials/webr-unified-gh-workflow)  
@@ -751,7 +753,7 @@ Outside of the [Python packages built-in to Pyodide](https://pyodide.org/en/stab
 
 ## How the quarto-{webr,pyodide} extension works
 
-![](assets/gifs/animated-quarto-webr-workflow-once.gif){fig-alt="An animated GIF showing how the `quarto-webr` extension works with Quarto, webR, and a static server." fig-align="center"}
+![](assets/gifs/animated-quarto-webr-workflow-once.gif){fig-alt="An animated GIF showing how the {quarto-webr} extension works with Quarto, webR, and a static server." fig-align="center"}
 
 ## Use cases
 
@@ -809,7 +811,7 @@ If the `_extensions` directory is not found within a Quarto project,
 the project is **not** using any extensions!
 :::
 
-## Using quarto-webr - 4 Steps {auto-animate="true"}
+## Using {quarto-webr} - 4 Steps {auto-animate="true"}
 
 :::columns
 :::{.column style="max-height: 1000px; width=50%;"}
@@ -837,7 +839,7 @@ summary(fit)
 :::
 :::
 
-## Using quarto-webr - 4 Steps {auto-animate="true"}
+## Using {quarto-webr} - 4 Steps {auto-animate="true"}
 
 :::columns
 :::{.column style="max-height: 1000px; width=50%;"}
@@ -869,7 +871,7 @@ summary(fit)
 :::
 
 
-## Using quarto-webr - 4 Steps {auto-animate="true"}
+## Using {quarto-webr} - 4 Steps {auto-animate="true"}
 
 :::columns
 :::{.column style="max-height: 1000px; width=50%;"}
@@ -901,7 +903,7 @@ summary(fit)
 :::
 :::
 
-## Using quarto-webr - 4 Steps {auto-animate="true"}
+## Using {quarto-webr} - 4 Steps {auto-animate="true"}
 
 :::columns
 :::{.column style="max-height: 1000px; width=50%;"}
@@ -939,16 +941,16 @@ Or, you can press the "Render" button ![Rendering a Quarto Document using "Rende
 :::
 :::
 
-## quarto-webr: In Action
+## {quarto-webr}: In Action
 
-![`quarto-webr` Filter in Action](assets/gifs/quarto-webr-demo-gif.gif){fig-alt="An animated GIF showing a Quarto document inside of RStudio augmented by the {quarto-webr} extension having different values placed inside of its code cell."}
+![{quarto-webr} Extension in Action](assets/gifs/quarto-webr-demo-gif.gif){fig-alt="An animated GIF showing a Quarto document inside of RStudio augmented by the {quarto-webr} extension having different values placed inside of its code cell."}
 
 ## What about Python? Similar story...
 
 :::{.r-fit-text}
 
 :::{.fragment}
-First, install the `quarto-pyodide` extension using terminal with:
+First, install the {quarto-pyodide} extension using terminal with:
 
 ```sh
 quarto add coatless-quarto/pyodide
@@ -956,7 +958,7 @@ quarto add coatless-quarto/pyodide
 :::
 
 :::{.fragment}
-Next, register the `pyodide` extension in the Quarto Document with:
+Next, register the extension in the Quarto Document with:
 
   ```{.md code-line-numbers="4-5"}
   ---
@@ -970,24 +972,24 @@ Next, register the `pyodide` extension in the Quarto Document with:
 
 
 :::{.fragment}
-Finally, use `{pyodide-python}` instead of `{python}`
+Finally, use `{pyodide-python}` instead of `{python}` when creating a code cell.
 :::
 
 :::
 
-## quarto-pyodide: In Action
+## {quarto-pyodide}: In Action
 
-![`quarto-pyodide` Filter in Action](assets/gifs/quarto-pyodide-initial-demo.gif){fig-alt="An animated GIF showing a Quarto document inside of VS Code augmented by the {quarto-pyodide} extension having different Python code placed inside of its code cell generating a variety of outputs."}
+![{quarto-pyodide} Extension in Action](assets/gifs/quarto-pyodide-initial-demo.gif){fig-alt="An animated GIF showing a Quarto document inside of VS Code augmented by the {quarto-pyodide} extension having different Python code placed inside of its code cell generating a variety of outputs."}
 
-## Options for `quarto-webr`
+## Options for {quarto-webr}
 
-There are two types of options in `quarto-webr`:
+There are two types of options in {quarto-webr}:
 
 - [Cell-level](https://quarto-webr.thecoatlessprofessor.com/qwebr-cell-options.html): Customize how code is evaluated inside of the cell.
 - [Document-level](https://quarto-webr.thecoatlessprofessor.com/qwebr-meta-options.html): Globally set different document properties. 
 
 :::{.callout-note}
-The cell-level options use a custom code cell parser called [`quarto-codecelloptions`](https://github.com/coatless-quarto/codecelloptions) and, thus, are not exactly 1-to-1 with Quarto options.
+The cell-level options use a custom code cell parser called [{quarto-codecelloptions}](https://github.com/coatless-quarto/codecelloptions) and, thus, are not exactly 1-to-1 with Quarto options.
 :::
 
 ## Document-level options
@@ -1034,11 +1036,11 @@ plot(pressure)
 
 ## Demos
 
-- Let's take a look at how different cell and document options behave by looking at the [Feature Demos](https://quarto-webr.thecoatlessprofessor.com/demos/qwebr-feature-demos.html) for `quarto-webr`.
-- Alternatively, we can see examples with [`quarto-pyodide`'s interactive cell](https://quarto.thecoatlessprofessor.com/pyodide/qpyodide-code-cell-demo.html). 
+- Let's take a look at how different cell and document options behave by looking at the [Feature Demos](https://quarto-webr.thecoatlessprofessor.com/demos/qwebr-feature-demos.html) for {quarto-webr}.
+- Alternatively, we can see examples with [{quarto-pyodide}'s interactive cell](https://quarto.thecoatlessprofessor.com/pyodide/qpyodide-code-cell-demo.html). 
 
 :::{.callout-important}
-`{quarto-pyodide}` has yet to receive the options treatment! We only make available an interactive editor.
+{quarto-pyodide} has yet to receive the options treatment! We only make available an interactive editor.
 :::
 
 # Publishing
@@ -1047,7 +1049,7 @@ plot(pressure)
 
 - Once you are satisfied with the Quarto document, it's time to publish your work!
 - The publishing step is important as the documents need to be viewed under the guise of a server.
-  - Directly accessing the `.html` will likely cause the app 
+  - Directly accessing the HTML document may prevent it from working correctly under various configuration options. 
 - There are multiple options for publishing with Quarto, and we'll present two of them. 
 
 ## Publish Options
@@ -1086,7 +1088,7 @@ production environment.
 ### Overview of Services
 
 - [GitHub](https://github.com): Enables version control and integrates with ... 
-- Continuous deployment (CI) services that **build** and **deploy** code on each pushed commit
+- Continuous deployment (CD) services that **build** and **deploy** code on each pushed commit
    - [GitHub Actions](https://github.com/features/actions): GitHub's built-in 
    way. (Preferred)
    - [Azure Pipelines](https://azure.microsoft.com/en-us/products/devops/pipelines): Microsoft's Azure cloud version
@@ -1258,7 +1260,7 @@ As we're using the `engine: knitr`, this requires additional R package dependenc
 In the next part of the file, we focus on Quarto:
 
 1. Installing Quarto 
-1. Installing the `quarto-webr` Quarto extension
+1. Installing the {quarto-webr} Quarto extension
     - This step can be ommitted; but, we want future updates!
 1. Render any `.qmd` files in the current directory
 
@@ -1300,16 +1302,19 @@ Then, we deploy that archive onto GitHub pages.
 
 ## View the Deployed Documents
 
-From here, our Quarto augmented documents should be available for everyone! 
+From here, our augmented Quarto documents with interactivity should be available for everyone! 
 
 <https://quarto.thecoatlessprofessor.com/quarto-webr-pyodide-demo/>
 
+You can see the deployment repository here:
+
+<https://github.com/coatless-quarto/quarto-webr-pyodide-demo>
 
 # Concluding
 
 ## Future Work 
 
-- Improve the `quarto-pyodide` extension features.
+- Improve the {quarto-pyodide} extension features.
   - Move toward a message posting interface.
   - Improve graphing support
 - Formalize a built-in code exercise checking feature. 
