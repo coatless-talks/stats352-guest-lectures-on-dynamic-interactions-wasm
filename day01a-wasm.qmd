@@ -44,8 +44,9 @@ Additional options:
 :::{.column}
 These slides were made using [Quarto](https://quarto.org/)'s [Revealjs](https://quarto.org/docs/presentations/revealjs/) format under the [`{quarto-stanford}`](https://github.com/coatless-quarto/stanford) theme.
 
-See source of the presentation on GitHub at: <
-https://github.com/coatless-talks/stats352-guest-lectures-on-dynamic-interactions-wasm>
+See source of the presentation on GitHub at: 
+
+<https://github.com/coatless-talks/stats352-guest-lectures-on-dynamic-interactions-wasm>
 :::
 
 :::
