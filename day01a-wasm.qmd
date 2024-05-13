@@ -66,7 +66,7 @@ See source of the presentation on GitHub at:
 ](https://github.com/lionel-)
 - Pyodide Core: [Michael Droettboom](https://github.com/mdboom) and [Pyodide Contributors](https://zenodo.org/records/5156931)
 - Shinylive Core: [Winston Chang](https://github.com/wch/) and [Barret Schloerke](https://github.com/schloerke)
-- Quarto Core: J.J., Carlos, Charles, Christophe, Mickaël & Yihui
+- Quarto Core: [J.J.](https://github.com/jjallaire), [Carlos](https://github.com/cscheid), [Charles](https://github.com/dragonstyle), [Christophe](https://github.com/cderv), [Mickaël](https://github.com/mcanouil) & [Yihui](https://github.com/Yihui)
 - Emscripten: [Alon Zakai](https://www.linkedin.com/in/alonzakai/)
 - Contributors: [JooYoung Seo](https://ischool.illinois.edu/people/jooyoung-seo), [Ute Hahn](https://github.com/ute), [E. Eli Holmes](https://eeholmes.github.io/), [boB Rudis](https://rud.is/b/), and [Stathis Gennatas](https://github.com/egenn)
 
@@ -785,7 +785,7 @@ If you are comfortable with VS Code, you can jump right into an authoring Codesp
 
 :::{.incremental}
 1. Open or Create an [RStudio Quarto Project](https://quarto.org/docs/tools/rstudio.html#projects)
-2. Navigate to the Terminal tab in lower left side of RStudio
+2. Navigate to the *Terminal* tab in lower left side of RStudio
 3. Type the install command:
 
    `quarto add coatless/quarto-webr` 
@@ -951,7 +951,7 @@ Or, you can press the "Render" button ![Rendering a Quarto Document using "Rende
 :::{.r-fit-text}
 
 :::{.fragment}
-First, install the {quarto-pyodide} extension using terminal with:
+First, install the {quarto-pyodide} extension using *Terminal* with:
 
 ```sh
 quarto add coatless-quarto/pyodide
@@ -1058,7 +1058,7 @@ plot(pressure)
 ::: panel-tabset
 #### GitHub Pages
 
-To make your Quarto document accessible on [GitHub Pages via Quarto](https://quarto.org/docs/publishing/github-pages.html), use the following command in your terminal:
+To make your Quarto document accessible on [GitHub Pages via Quarto](https://quarto.org/docs/publishing/github-pages.html), use the following command in *Terminal*:
 
 ```sh
 quarto publish gh-pages
@@ -1068,7 +1068,7 @@ This option is great if you want to share your document through a GitHub Pages w
 
 #### Quarto Pub
 
-Alternatively, you can publish your Quarto document on [Quarto Pub via Quarto](https://quarto.org/docs/publishing/quarto-pub.html). Use the following command in your terminal:
+Alternatively, you can publish your Quarto document on [Quarto Pub via Quarto](https://quarto.org/docs/publishing/quarto-pub.html). Use the following command in *Terminal*:
 
 ```sh
 quarto publish quarto-pub
@@ -1240,19 +1240,10 @@ As we're using the `engine: knitr`, this requires additional R package dependenc
 - name: "Install Quarto extensions"
   shell: bash
   run: |
-    quarto add --no-prompt coatless/quarto-webr@0.4.1
+    quarto add --no-prompt coatless/quarto-webr
 
 - name: "Render working directory"
   uses: quarto-dev/quarto-actions/render@v2
-
-- name: "Upload Pages artifact"
-  uses: actions/upload-pages-artifact@v2
-  with: 
-    retention-days: 1
-
-- name: "Deploy to GitHub Pages"
-  id: deployment
-  uses: actions/deploy-pages@v2
 ```
 :::
 
@@ -1263,6 +1254,7 @@ In the next part of the file, we focus on Quarto:
 1. Installing Quarto 
 1. Installing the {quarto-webr} Quarto extension
     - This step can be ommitted; but, we want future updates!
+    - We can also pin the version by using `coatless/quarto-webr@v0.4.1`
 1. Render any `.qmd` files in the current directory
 
 :::
@@ -1289,7 +1281,7 @@ In the next part of the file, we focus on Quarto:
 
 :::{.column style="width: 45%; font-size: 0.5em"}
 
-Finally, we take our rendered Quarto documents and create a zip archive.
+Finally, we take our rendered Quarto documents and create a zip archive that can be used on GitHub Pages.
 
 Then, we deploy that archive onto GitHub pages.
 :::
